@@ -1,12 +1,12 @@
-# FamilyLink Lite v1.2
+# FamilyLink Lite v1.3
 
-UI-only cleanup release.
+Stabilisation release after the v1.2 UI cleanup.
 
 Changes:
-- cleaner first-run role screen
-- cleaner parent pairing screen
-- advanced manual pairing moved into a dialog
-- cleaner child pairing screen
-- parent dashboard reorganised around device/status/screen time/commands/recent activity
-- same protocol version as v1.1
-- same signing key
+- fixed Java compile error from invalid `\D` escape in pairing-code cleanup
+- fixed Java compile error from multiline dashboard labels
+- kept package name and signing key unchanged
+- bumped versionCode to 13 and versionName to 1.3
+- added gradle.properties to suppress the compileSdk 35 Android Gradle Plugin warning
+
+Build with GitHub Actions as before.
