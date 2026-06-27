@@ -1,43 +1,18 @@
-# FamilyLink Lite v0.1
+# FamilyLink Lite v0.4
 
-Private Android sideload prototype for parent phone + child tablet.
+Private Android sideload app for a parent phone and child tablet on the same Wi-Fi.
 
-## Current features
-- One APK with two modes: Parent phone / Child tablet
-- Local Wi-Fi TCP connection only
-- Encrypted commands using AES-GCM and a random pairing key
-- Pairing code generated on child tablet
-- Parent can send a message
-- Parent can ping the tablet until acknowledged/stopped
-- Parent can mute media volume or set media volume to 30% / 70%
-- Parent can request today's app usage report
-- Device Admin receiver scaffold included
-
-## Not yet implemented
-- Camera QR scanning. The pairing code is shown as text for v0.1; QR generation/scanning is the next step.
-- Full Device Owner setup and strict app blocking.
-- Timers per app.
-- Foreground service for always-on operation after reboot.
-- Better UI.
+## v0.4 changes
+- Separate first-run function selection from saved connected screen.
+- If a parent connection is saved, the app opens directly to the connected screen.
+- Connected/disconnected header with light green/red status.
+- Refresh button next to disconnected/connected status.
+- `+` button in the connected screen to add/replace a child device.
+- Child UDP presence broadcast: immediate, after 5 seconds, after 15 seconds, then every 60 seconds.
+- Parent listens for child broadcasts and reconnects automatically when back on the same Wi-Fi.
+- Bad encrypted handshake from an IP blocks that IP for 60 seconds.
+- Screen time section shows today's total as HH:MM and top 3 apps.
+- Commands section contains volume up/down/mute, message, ping, stop ping, refresh screen time.
 
 ## Build
-Open this folder in Android Studio and let Gradle sync. Build APK from:
-Build > Build App Bundle(s) / APK(s) > Build APK(s)
-
-## Permissions to enable on child tablet
-1. Open Child tablet mode.
-2. Tap "Open Usage Access settings" and allow FamilyLink Lite.
-3. Optional: tap "Enable device admin".
-
-## Use
-1. Install the same APK on both devices.
-2. On tablet, choose Child tablet.
-3. Copy the pairing code.
-4. On phone, choose Parent phone and paste the pairing code.
-5. Use the buttons to send commands.
-
-## Security model
-- Commands are encrypted with AES-GCM.
-- The pairing key is generated on the tablet.
-- The app only listens on the local network port 45454.
-- Anyone with the pairing code can control the child app, so keep it private.
+Use GitHub Actions or Android Studio. Build task: `gradle assembleDebug`.
