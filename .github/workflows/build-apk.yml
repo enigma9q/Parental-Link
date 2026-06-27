@@ -24,10 +24,10 @@ jobs:
 
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
-        working-directory: familylink-lite
+        working-directory: .
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: familylink-lite-debug-apk
-          path: familylink-lite/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
