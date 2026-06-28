@@ -6,10 +6,10 @@ public final class AppConfig {
     public static final int COMMAND_PORT = 45454;
     public static final int DISCOVERY_PORT = 45455;
 
-    public static final int PROTOCOL_VERSION = 7;
+    public static final int PROTOCOL_VERSION = 8;
     public static final int MIN_SUPPORTED_PROTOCOL = 2;
 
-    public static final String APP_VERSION = "1.9";
+    public static final String APP_VERSION = "2.0";
     public static final String DEFAULT_REPO = "enigma9q/Parental-Link";
 
     public static final String PREFS = "p";

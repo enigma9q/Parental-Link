@@ -2,6 +2,7 @@ package com.enigma.familylinklite.ui;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -51,9 +52,13 @@ public final class UiFactory {
 
     public static LinearLayout attachRoot(Activity activity) {
         ScrollView scrollView = new ScrollView(activity);
+        scrollView.setFillViewport(false);
+        scrollView.setFitsSystemWindows(true);
+        scrollView.setBackgroundColor(Color.rgb(245, 249, 252));
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(24, 18, 24, 32);
+        root.setPadding(24, 64, 24, 88);
+        root.setBackgroundColor(Color.rgb(245, 249, 252));
         scrollView.addView(root);
         activity.setContentView(scrollView);
         return root;
