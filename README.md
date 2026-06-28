@@ -1,14 +1,18 @@
-FamilyLink Lite v2.0
+Parental-Link v2.1
 
-Changes in v2.0:
-- Cleaner dashboard focused on status, today screen time, current app, volume, and activity.
-- Removed add-device button from dashboard; moved Add device into the parent side panel.
-- Added right-side parent panel scaffold.
-- Added six-box pairing code entry.
-- Fixed update source to the configured repository.
-- Added dashboard back behavior: secondary screens go back to dashboard; dashboard back soft-exits to home.
-- Added parent ping screen with Stop ping.
-- Child ping now tries to maximize/unmute media/alarm volume and opens a full-screen stop screen on the tablet.
-- Added child current app to usage status payload.
-- Parent notification now shows compact device status when status data is available.
-- Added light blue background and larger safe padding for top/bottom system bars.
+Changes in v2.1:
+- Renamed visible app labels to Parental-Link.
+- Added Blocked apps screen with refresh and unblock-by-package support.
+- Added one-time unlock code generation from the parent app.
+- Child settings can be unlocked with device master password or one-time parent code.
+- Child settings screen now shows connection info and required rights checklist.
+- Added protected Remove app flow with unlock-method attribution.
+- Child pairing QR is smaller.
+- Child app only shows Restart server, not Stop server.
+- Parent messages, lock timeout, and app blocked events can open a full-screen attention page on the child device.
+- Ping remains full screen and cannot be dismissed with Back; Stop ping button is available.
+- Version bumped to 2.1 / protocol 9.
+
+Notes:
+- Full APK build still needs GitHub Actions or Android Studio.
+- Device Owner is not used; this remains Device Administrator level.

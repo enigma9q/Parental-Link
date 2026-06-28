@@ -68,7 +68,7 @@ public final class UiFactory {
         LinearLayout bar = new LinearLayout(activity);
         bar.setOrientation(LinearLayout.HORIZONTAL);
 
-        TextView name = text(activity, "FamilyLink Lite", 20);
+        TextView name = text(activity, "Parental-Link", 20);
         boolean attention = prefs.getBoolean("updateAvailable", false)
                 || prefs.getBoolean("securityAttention", false)
                 || prefs.getBoolean("versionAttention", false);
