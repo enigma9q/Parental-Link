@@ -1,6 +1,7 @@
 package com.enigma.familylinklite;
 
 import android.Manifest;
+import android.content.pm.PackageManager;
 import com.enigma.familylinklite.services.ChildServerService;
 import com.enigma.familylinklite.services.ParentMonitorService;import com.enigma.familylinklite.security.CryptoUtils;import android.app.*;import android.app.admin.DevicePolicyManager;import android.content.*;import android.graphics.*;import android.media.*;import android.net.*;import android.net.wifi.WifiManager;import android.os.*;import android.provider.Settings;import android.text.*;import android.text.format.Formatter;import android.view.*;import android.widget.*;import com.enigma.familylinklite.core.AppConfig;import com.enigma.familylinklite.devices.DeviceProfile;import com.enigma.familylinklite.network.CommandClient;import com.enigma.familylinklite.storage.AppLog;import com.enigma.familylinklite.storage.SavedConnection;import com.enigma.familylinklite.ui.UiFactory;import com.enigma.familylinklite.updates.UpdateChecker;import com.enigma.familylinklite.updates.VersionUtils;import com.google.zxing.*;import com.google.zxing.common.BitMatrix;import com.google.zxing.integration.android.IntentIntegrator;import com.google.zxing.integration.android.IntentResult;import org.json.*;import java.io.*;import java.net.*;import java.nio.charset.StandardCharsets;import java.security.*;import java.util.*;import java.util.concurrent.*;import java.util.concurrent.atomic.*;import javax.crypto.*;import javax.crypto.spec.*;
 
