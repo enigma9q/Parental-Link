@@ -1,12 +1,15 @@
-# FamilyLink Lite v1.3
+# FamilyLink Lite v1.8
 
-Stabilisation release after the v1.2 UI cleanup.
+Safe architecture refactor step.
 
 Changes:
-- fixed Java compile error from invalid `\D` escape in pairing-code cleanup
-- fixed Java compile error from multiline dashboard labels
-- kept package name and signing key unchanged
-- bumped versionCode to 13 and versionName to 1.3
-- added gradle.properties to suppress the compileSdk 35 Android Gradle Plugin warning
+- Added `updates/UpdateChecker` and moved GitHub release checking out of `MainActivity`.
+- Added `devices/DeviceProfile` for child nickname/icon/IP and parent identity access.
+- Kept UI and behaviour unchanged.
+- Bumped version to 1.8 / versionCode 18.
 
-Build with GitHub Actions as before.
+
+## v1.9
+- Moved pairing code, pairing ID, and AES-GCM helpers into `security/CryptoUtils`.
+- Child service now reads version/protocol/capabilities from `core/AppConfig`.
+- Updated app version to 1.9 / versionCode 19.
