@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.graphics.drawable.GradientDrawable;
 
 public final class UiFactory {
     private UiFactory() {}
@@ -30,6 +31,9 @@ public final class UiFactory {
         Button button = new Button(activity);
         button.setText(value);
         button.setAllCaps(false);
+        button.setBackgroundColor(Color.TRANSPARENT);
+        button.setTextColor(Color.rgb(25, 118, 210));
+        button.setPadding(18, 10, 18, 10);
         return button;
     }
 
@@ -64,6 +68,17 @@ public final class UiFactory {
         return root;
     }
 
+
+    public static LinearLayout attachFixedRoot(Activity activity) {
+        LinearLayout root = new LinearLayout(activity);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(24, 64, 24, 88);
+        root.setFitsSystemWindows(true);
+        root.setBackgroundColor(Color.rgb(245, 249, 252));
+        activity.setContentView(root);
+        return root;
+    }
+
     public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick) {
         LinearLayout bar = new LinearLayout(activity);
         bar.setOrientation(LinearLayout.HORIZONTAL);
@@ -72,11 +87,21 @@ public final class UiFactory {
         boolean attention = prefs.getBoolean("updateAvailable", false)
                 || prefs.getBoolean("securityAttention", false)
                 || prefs.getBoolean("versionAttention", false);
-        Button user = button(activity, attention ? "👤•" : "👤");
+        Button user = button(activity, attention ? "👤 ●" : "👤");
+        GradientDrawable userBg = new GradientDrawable();
+        userBg.setShape(GradientDrawable.OVAL);
+        userBg.setColor(Color.WHITE);
+        userBg.setStroke(1, Color.rgb(210, 225, 235));
+        user.setBackground(userBg);
+        user.setMinWidth(72);
+        user.setMinHeight(72);
 
         bar.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(user);
+        bar.addView(user, new LinearLayout.LayoutParams(72,72));
         root.addView(bar);
+        View divider = new View(activity);
+        divider.setBackgroundColor(Color.rgb(210, 225, 235));
+        root.addView(divider, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         user.setOnClickListener(userMenuClick::onClick);
         return name;
     }
