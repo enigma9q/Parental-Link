@@ -29,5 +29,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: familylink-lite-debug-apk
+          name: Parental-Link-Debug
           path: app/build/outputs/apk/debug/*.apk
