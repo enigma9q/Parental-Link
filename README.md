@@ -1,13 +1,13 @@
-Parental-Link v2.5
+Parental-Link v2.6.3
 
-Focused update:
-- child permission status reporting
-- dashboard red/yellow/green status integration for missing permissions/stale updates
-- child unlock screen warning when new permissions are needed
-- volume category selector with right-aligned mute and maximum slider
-- child-side volume maximum enforcement scaffold
-- DND status included in child status payload
-- log categories/severity and one-line/full-status view mode
-- clickable log details
+Changes:
+- Sticky mute enforcement added for child volume streams.
+- Parent mute command saves the previous child volume level.
+- Unmute restores the previous level, capped by the parent maximum.
+- Child-side enforcer re-applies mute if the child tries to remove it.
+- Volume enforcement interval tightened to 2.5 seconds.
+- Added capability flags: strict_volume_enforcement, sticky_mute_enforcement, mute_restore_previous_volume.
 
-Build with GitHub Actions as before.
+Notes:
+- Android stream mute behaviour can vary by device/stream. The app also forces stream volume to 0 as a fallback.
+- Gradle build not run in this runtime.

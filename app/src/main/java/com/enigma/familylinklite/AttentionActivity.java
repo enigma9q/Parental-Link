@@ -3,7 +3,30 @@ package com.enigma.familylinklite;
 import android.app.*;import android.graphics.Color;import android.os.*;import android.view.*;import android.widget.*;
 
 public class AttentionActivity extends Activity{
-    boolean blocking=false;
-    public void onCreate(Bundle b){super.onCreate(b);getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);String title=getIntent().getStringExtra("title");String text=getIntent().getStringExtra("text");blocking=getIntent().getBooleanExtra("blocking",false);if(title==null)title="Parental-Link";if(text==null)text="Parent action requires attention.";LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setGravity(Gravity.CENTER);root.setPadding(32,32,32,32);root.setBackgroundColor(blocking?Color.rgb(255,245,245):Color.rgb(245,249,252));TextView t=new TextView(this);t.setText(title);t.setTextSize(26);t.setGravity(Gravity.CENTER);root.addView(t);TextView msg=new TextView(this);msg.setText(text);msg.setTextSize(18);msg.setGravity(Gravity.CENTER);root.addView(msg);Button ok=new Button(this);ok.setAllCaps(false);ok.setText(blocking?"Parent unlock required":"OK");root.addView(ok);setContentView(root);ok.setOnClickListener(v->{if(!blocking)finish();});}
+    boolean blocking=false; android.content.BroadcastReceiver closeReceiver;
+    public void onCreate(Bundle b){
+        super.onCreate(b);
+        blocking=getIntent().getBooleanExtra("blocking",false);
+        String title=getIntent().getStringExtra("title");String text=getIntent().getStringExtra("text");
+        if(title==null)title="Parental-Link";if(text==null)text="Parent action requires attention.";
+        keepFrontVisuals();
+        LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setGravity(Gravity.CENTER);root.setPadding(40,40,40,40);root.setBackgroundColor(blocking?Color.rgb(255,248,248):Color.rgb(222,236,247));
+        TextView t=new TextView(this);t.setText(title);t.setTextSize(30);t.setTextColor(Color.rgb(18,38,56));t.setGravity(Gravity.CENTER);t.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);root.addView(t,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        TextView msg=new TextView(this);msg.setText(text);msg.setTextSize(20);msg.setTextColor(Color.rgb(25,45,63));msg.setGravity(Gravity.CENTER);msg.setPadding(0,24,0,24);root.addView(msg,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+        if(blocking){TextView hint=new TextView(this);hint.setText("Only the parent can remove this limitation. The physical power button can still lock the screen.");hint.setTextSize(15);hint.setTextColor(Color.rgb(70,85,98));hint.setGravity(Gravity.CENTER);root.addView(hint,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));}
+        else{Button ok=new Button(this);ok.setAllCaps(false);ok.setText("OK");root.addView(ok);ok.setOnClickListener(v->finish());}
+        setContentView(root);
+        closeReceiver=new android.content.BroadcastReceiver(){public void onReceive(android.content.Context c,android.content.Intent i){finish();}};
+        if(android.os.Build.VERSION.SDK_INT>=33)registerReceiver(closeReceiver,new android.content.IntentFilter("com.enigma.familylinklite.CLOSE_ATTENTION"),RECEIVER_NOT_EXPORTED);else registerReceiver(closeReceiver,new android.content.IntentFilter("com.enigma.familylinklite.CLOSE_ATTENTION"));
+    }
+    void keepFrontVisuals(){
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        if(Build.VERSION.SDK_INT>=27)getWindow().getAttributes().layoutInDisplayCutoutMode=WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        if(Build.VERSION.SDK_INT>=21)getWindow().setStatusBarColor(Color.rgb(19,45,67));
+    }
+    protected void onResume(){super.onResume();keepFrontVisuals();}
+    public void onWindowFocusChanged(boolean hasFocus){super.onWindowFocusChanged(hasFocus);if(hasFocus)keepFrontVisuals();}
     public void onBackPressed(){if(!blocking)super.onBackPressed();}
+    protected void onDestroy(){try{if(closeReceiver!=null)unregisterReceiver(closeReceiver);}catch(Exception ignored){}super.onDestroy();}
 }

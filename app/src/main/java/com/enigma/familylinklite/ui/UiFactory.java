@@ -58,13 +58,14 @@ public final class UiFactory {
         ScrollView scrollView = new ScrollView(activity);
         scrollView.setFillViewport(false);
         scrollView.setFitsSystemWindows(true);
-        scrollView.setBackgroundColor(Color.rgb(245, 249, 252));
+        scrollView.setBackgroundColor(Color.rgb(185, 215, 235));
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(24, 64, 24, 88);
-        root.setBackgroundColor(Color.rgb(245, 249, 252));
+        root.setPadding(24, 72, 36, 88);
+        root.setBackgroundColor(Color.rgb(185, 215, 235));
         scrollView.addView(root);
         activity.setContentView(scrollView);
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(95, 145, 180)); activity.getWindow().setNavigationBarColor(Color.rgb(185, 215, 235)); }
         return root;
     }
 
@@ -72,10 +73,11 @@ public final class UiFactory {
     public static LinearLayout attachFixedRoot(Activity activity) {
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(24, 64, 24, 88);
+        root.setPadding(24, 72, 36, 88);
         root.setFitsSystemWindows(true);
-        root.setBackgroundColor(Color.rgb(245, 249, 252));
+        root.setBackgroundColor(Color.rgb(185, 215, 235));
         activity.setContentView(root);
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(95, 145, 180)); activity.getWindow().setNavigationBarColor(Color.rgb(185, 215, 235)); }
         return root;
     }
 
@@ -88,19 +90,22 @@ public final class UiFactory {
                 || prefs.getBoolean("securityAttention", false)
                 || prefs.getBoolean("versionAttention", false);
         Button user = button(activity, attention ? "👤 ●" : "👤");
+        user.setTextSize(26);
         GradientDrawable userBg = new GradientDrawable();
         userBg.setShape(GradientDrawable.OVAL);
         userBg.setColor(Color.WHITE);
         userBg.setStroke(1, Color.rgb(210, 225, 235));
         user.setBackground(userBg);
-        user.setMinWidth(72);
-        user.setMinHeight(72);
+        user.setMinWidth(96);
+        user.setMinHeight(96);
 
         bar.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(user, new LinearLayout.LayoutParams(72,72));
+        LinearLayout.LayoutParams userLp = new LinearLayout.LayoutParams(96,96);
+        userLp.setMargins(0,0,24,0);
+        bar.addView(user, userLp);
         root.addView(bar);
         View divider = new View(activity);
-        divider.setBackgroundColor(Color.rgb(210, 225, 235));
+        divider.setBackgroundColor(Color.rgb(120, 165, 195));
         root.addView(divider, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         user.setOnClickListener(userMenuClick::onClick);
         return name;
