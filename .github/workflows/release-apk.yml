@@ -1,23 +1,29 @@
-name: Build and Release APK
+name: Build, Tag and Release APK
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-      - 'v*.*.*'
+    branches:
+      - main
+      - master
 
 permissions:
   contents: write
 
+concurrency:
+  group: parental-link-release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build-release:
+  build-tag-release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Java
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -25,38 +31,69 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
 
-      - name: Build debug APK
-        run: gradle assembleDebug --stacktrace
-
-      - name: Read version and prepare APK
+      - name: Read app version
         id: version
         shell: bash
         run: |
-          VERSION_NAME=$(grep -oP "versionName\s+'\K[^']+" app/build.gradle)
-          VERSION_CODE=$(grep -oP "versionCode\s+\K[0-9]+" app/build.gradle)
+          VERSION_NAME=$(sed -n "s/.*versionName[[:space:]]*['\"]\([^'\"]*\)['\"].*/\1/p" app/build.gradle | head -n 1)
+          VERSION_CODE=$(sed -n "s/.*versionCode[[:space:]]*\([0-9][0-9]*\).*/\1/p" app/build.gradle | head -n 1)
+
+          if [ -z "$VERSION_NAME" ]; then
+            echo "Could not read versionName from app/build.gradle" >&2
+            exit 1
+          fi
+
+          if [ -z "$VERSION_CODE" ]; then
+            echo "Could not read versionCode from app/build.gradle" >&2
+            exit 1
+          fi
+
           TAG_NAME="v${VERSION_NAME}"
-          APK_SOURCE="app/build/outputs/apk/debug/app-debug.apk"
-          APK_NAME="parental-link-v${VERSION_NAME}-debug.apk"
-          test -f "$APK_SOURCE"
-          cp "$APK_SOURCE" "$APK_NAME"
+          APK_NAME="parental-link-v${VERSION_NAME}.apk"
+
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists. Bump versionName and versionCode before publishing again." >&2
+            exit 1
+          fi
+
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
           echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Create GitHub Release
+      - name: Build release APK
+        run: gradle assembleRelease --stacktrace
+
+      - name: Prepare APK asset
+        shell: bash
+        run: |
+          APK_SOURCE="app/build/outputs/apk/release/app-release.apk"
+          test -f "$APK_SOURCE"
+          cp "$APK_SOURCE" "${{ steps.version.outputs.apk_name }}"
+
+      - name: Create and push version tag
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.version.outputs.tag_name }}"
+          git push origin "${{ steps.version.outputs.tag_name }}"
+
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag_name }}
           name: Parental-Link ${{ steps.version.outputs.tag_name }}
           body: |
-            Parental-Link Android debug APK.
+            Parental-Link Android APK.
 
             Version name: ${{ steps.version.outputs.version_name }}
             Version code: ${{ steps.version.outputs.version_code }}
 
-            This release was created automatically after the APK compiled successfully.
+            Built, tagged, and published automatically after files were pushed to the repository.
           files: ${{ steps.version.outputs.apk_name }}
           fail_on_unmatched_files: true
           make_latest: true

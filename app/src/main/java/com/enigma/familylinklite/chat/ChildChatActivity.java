@@ -21,7 +21,7 @@ public class ChildChatActivity extends Activity {
         String last=prefs.getString("lastParentChat","");
         if(last.length()>0)root.addView(UiFactory.text(this,"Last parent message: "+last,15));
         root.addView(UiFactory.text(this,"Send a preset reply or emoji. The parent can check it from the Chat screen.",15));
-        String[] messages={"👍 OK","👌 Coming","🙏 Sorry","❤️","📞 Call me","I need help","I finished","One minute"};
+        String[] messages={"👍 OK","🍽️ I am hungry","👌 Coming","⏱️ 5 more minutes","📞 Call me","🆘 I need help","✅ I finished","🙏 Sorry"};
         GridLayout grid=new GridLayout(this);grid.setColumnCount(2);
         for(String m:messages){Button replyButton=UiFactory.button(this,m);grid.addView(replyButton,new ViewGroup.LayoutParams(getResources().getDisplayMetrics().widthPixels/2-42,100));replyButton.setOnClickListener(v->{String text=((Button)v).getText().toString();SharedPreferences.Editor ed=getSharedPreferences("p",0).edit();ed.putString("lastChildChatSent",text+" at "+ChatStore.now()).apply();ChatStore.append(this,"Child",text,"sent");Toast.makeText(this,"Saved for parent",Toast.LENGTH_SHORT).show();finish();});}
         root.addView(grid);

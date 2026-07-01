@@ -12,12 +12,14 @@ import java.text.*;import java.util.*;
 
 public class BlockAccessibilityService extends AccessibilityService{
     Handler h=new Handler(Looper.getMainLooper());
-    Runnable timeoutCheck=new Runnable(){public void run(){enforceTimeout();h.postDelayed(this,7000);}};
+    Runnable timeoutCheck=new Runnable(){public void run(){enforceTimeout();h.postDelayed(this,900);}};
     public void onServiceConnected(){super.onServiceConnected();h.post(timeoutCheck);notifySmall("Accessibility blocking active","Parental-Link can now cover blocked apps.");}
     public void onDestroy(){h.removeCallbacksAndMessages(null);super.onDestroy();}
     public void onInterrupt(){}
     public void onAccessibilityEvent(AccessibilityEvent e){
-        if(e==null||e.getPackageName()==null)return;
+        if(e==null)return;
+        enforceTimeout();
+        if(e.getPackageName()==null)return;
         String pkg=e.getPackageName().toString();
         if(pkg.equals(getPackageName()))return;
         long now=System.currentTimeMillis();
@@ -43,7 +45,7 @@ public class BlockAccessibilityService extends AccessibilityService{
     void showBlockingScreen(long until,String title,String text,String reason){
         long now=System.currentTimeMillis();
         long last=getSharedPreferences("rules",0).getLong("last_blocking_screen_launch_"+reason,0);
-        if(now-last<1800)return;
+        if(now-last<700)return;
         getSharedPreferences("rules",0).edit().putLong("last_blocking_screen_launch_"+reason,now).apply();
         try{
             Intent i=new Intent(this, AttentionActivity.class);

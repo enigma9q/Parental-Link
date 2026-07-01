@@ -3,12 +3,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Parent -->
-    <path android:fillColor="#FFFFFF" android:pathData="M39,30a10,10 0,1 0,0.1,0M24,76c0,-16 7,-28 18,-28c10,0 18,12 18,28z" />
-    <!-- Child -->
-    <path android:fillColor="#FFFFFF" android:pathData="M72,40a7,7 0,1 0,0.1,0M61,76c0,-12 5,-21 13,-21c8,0 13,9 13,21z" />
-    <!-- Chain link left -->
-    <path android:fillColor="#FFFFFF" android:fillType="evenOdd" android:pathData="M40,65h17c5,0 9,4 9,9s-4,9 -9,9H40c-5,0 -9,-4 -9,-9s4,-9 9,-9zM41,70c-2,0 -4,2 -4,4s2,4 4,4h15c2,0 4,-2 4,-4s-2,-4 -4,-4z" />
-    <!-- Chain link right -->
-    <path android:fillColor="#FFFFFF" android:fillType="evenOdd" android:pathData="M52,65h17c5,0 9,4 9,9s-4,9 -9,9H52c-5,0 -9,-4 -9,-9s4,-9 9,-9zM53,70c-2,0 -4,2 -4,4s2,4 4,4h15c2,0 4,-2 4,-4s-2,-4 -4,-4z" />
+    <!-- Simple launcher-safe PL monogram. Adaptive background supplies the blue. -->
+    <path android:fillColor="#FFFFFF" android:pathData="M25,28h24c11,0 19,8 19,19s-8,19 -19,19H38v18H25zM38,40v14h10c4,0 7,-3 7,-7s-3,-7 -7,-7z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M69,28h13v44h24v12H69z" />
 </vector>

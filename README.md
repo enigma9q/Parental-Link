@@ -1,3 +1,7 @@
+# Parental-Link v2.9.17
+
+Quick-message activity/status refinement release.
+
 Parental-Link v2.6.3
 
 Changes:
@@ -11,3 +15,13 @@ Changes:
 Notes:
 - Android stream mute behaviour can vary by device/stream. The app also forces stream volume to 0 as a fallback.
 - Gradle build not run in this runtime.
+
+## v2.9.15 notes
+
+- Ring and Ping are now one user-facing action: Ring device.
+- Chat screen supports preset quick messages, typed parent messages, and manual chat-status refresh.
+- Screenshot, Battery saver, DND and Location update remain future actions, not active shortcuts.
+
+## v2.9.16 update
+
+Quick messages now have two simple categories: small top-right banner prompts and full-screen attention prompts. Banner prompts include Dismiss and Snooze 5 min, and the child action is visible from Refresh message status. Full-screen prompts can also block the device.
