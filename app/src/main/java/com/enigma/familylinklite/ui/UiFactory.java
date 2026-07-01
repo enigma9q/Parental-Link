@@ -18,6 +18,7 @@ public final class UiFactory {
     private UiFactory() {}
 
     public interface UserMenuClick { void onClick(View v); }
+    public interface HomeClick { void onClick(View v); }
 
     public static boolean isDark(Activity a) {
         SharedPreferences p = a.getSharedPreferences("p", 0);
@@ -71,7 +72,7 @@ public final class UiFactory {
         button.setMinHeight(dp(activity, 48));
         button.setBackground(rounded(activity, panel2(activity), 14));
         button.setTextColor(isDark(activity) ? Color.rgb(230, 241, 255) : Color.rgb(25, 95, 170));
-        button.setPadding(dp(activity, 12), dp(activity, 8), dp(activity, 12), dp(activity, 8));
+        button.setPadding(dp(activity, 10), dp(activity, 8), dp(activity, 10), dp(activity, 8));
         return button;
     }
 
@@ -142,6 +143,10 @@ public final class UiFactory {
     }
 
     public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick) {
+        return addTopBar(activity, root, prefs, userMenuClick, null);
+    }
+
+    public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick, HomeClick homeClick) {
         LinearLayout bar = new LinearLayout(activity);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(android.view.Gravity.CENTER_VERTICAL);
@@ -151,10 +156,13 @@ public final class UiFactory {
         titleBox.setOrientation(LinearLayout.HORIZONTAL);
         titleBox.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
-        TextView mark = text(activity, "PL", 15);
+        TextView mark = new TextView(activity);
+        mark.setText("PL");
+        mark.setTextSize(15);
         mark.setGravity(android.view.Gravity.CENTER);
         mark.setTextColor(Color.WHITE);
         mark.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        mark.setIncludeFontPadding(false);
         GradientDrawable markBg = new GradientDrawable();
         markBg.setShape(GradientDrawable.RECTANGLE);
         markBg.setCornerRadius(dp(activity, 9));
@@ -163,6 +171,10 @@ public final class UiFactory {
         LinearLayout.LayoutParams markLp = new LinearLayout.LayoutParams(dp(activity, 36), dp(activity, 36));
         markLp.setMargins(0,0,dp(activity,10),0);
         titleBox.addView(mark, markLp);
+        if (homeClick != null) {
+            mark.setOnClickListener(homeClick::onClick);
+            mark.setClickable(true);
+        }
 
         TextView name = text(activity, "Parental-Link", 20);
         name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
