@@ -1,0 +1,64 @@
+name: Build and Release APK
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Read version and prepare APK
+        id: version
+        shell: bash
+        run: |
+          VERSION_NAME=$(grep -oP "versionName\s+'\K[^']+" app/build.gradle)
+          VERSION_CODE=$(grep -oP "versionCode\s+\K[0-9]+" app/build.gradle)
+          TAG_NAME="v${VERSION_NAME}"
+          APK_SOURCE="app/build/outputs/apk/debug/app-debug.apk"
+          APK_NAME="parental-link-v${VERSION_NAME}-debug.apk"
+          test -f "$APK_SOURCE"
+          cp "$APK_SOURCE" "$APK_NAME"
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: Parental-Link ${{ steps.version.outputs.tag_name }}
+          body: |
+            Parental-Link Android debug APK.
+
+            Version name: ${{ steps.version.outputs.version_name }}
+            Version code: ${{ steps.version.outputs.version_code }}
+
+            This release was created automatically after the APK compiled successfully.
+          files: ${{ steps.version.outputs.apk_name }}
+          fail_on_unmatched_files: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
