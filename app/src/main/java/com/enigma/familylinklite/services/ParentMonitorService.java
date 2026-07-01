@@ -41,11 +41,9 @@ public class ParentMonitorService extends Service{
         if(last==0){String latest=p.getString("latestLog","");return latest.length()>0?latest:"No child status yet";}
         long age=System.currentTimeMillis()-last;
         if(age>10L*60L*1000L){
-            return "1 device • "+nick+" "+status+" • Last sync "+ageText(age)+" ago
-"+strip;
+            return "1 device • "+nick+" "+status+" • Last sync "+ageText(age)+" ago\n"+strip;
         }
-        return "1 device • "+nick+" "+status+" • "+today+" today"+(app.length()>0?" • "+app:"")+"
-"+strip;
+        return "1 device • "+nick+" "+status+" • "+today+" today"+(app.length()>0?" • "+app:"")+"\n"+strip;
     }
 
     String ageText(long ms){long m=ms/60000L;if(m<1)return "just now";if(m<60)return m+"m";long h=m/60;return h+"h "+(m%60)+"m";}
