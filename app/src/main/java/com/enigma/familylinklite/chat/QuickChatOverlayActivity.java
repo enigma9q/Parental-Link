@@ -15,8 +15,10 @@ import com.enigma.familylinklite.ui.UiFactory;
 public class QuickChatOverlayActivity extends Activity {
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
-        String emoji=getIntent()!=null?getIntent().getStringExtra("emoji"):"💬"; if(emoji==null||emoji.length()==0)emoji="💬";
-        String text=getIntent()!=null?getIntent().getStringExtra("text"):"Message from parent"; if(text==null)text="Message from parent";
+        String rawEmoji=getIntent()!=null?getIntent().getStringExtra("emoji"):"💬"; if(rawEmoji==null||rawEmoji.length()==0)rawEmoji="💬";
+        String rawText=getIntent()!=null?getIntent().getStringExtra("text"):"Message from parent"; if(rawText==null)rawText="Message from parent";
+        final String emoji=rawEmoji;
+        final String text=rawText;
         getWindow().setStatusBarColor(Color.WHITE);
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
