@@ -23,7 +23,7 @@ public class ChildChatActivity extends Activity {
         root.addView(UiFactory.text(this,"Send a preset reply or emoji. The parent can check it from the Chat screen.",15));
         String[] messages={"👍 OK","👌 Coming","🙏 Sorry","❤️","📞 Call me","I need help","I finished","One minute"};
         GridLayout grid=new GridLayout(this);grid.setColumnCount(2);
-        for(String m:messages){Button b=UiFactory.button(this,m);grid.addView(b,new ViewGroup.LayoutParams(getResources().getDisplayMetrics().widthPixels/2-42,100));b.setOnClickListener(v->{String text=((Button)v).getText().toString();SharedPreferences.Editor ed=getSharedPreferences("p",0).edit();ed.putString("lastChildChatSent",text+" at "+ChatStore.now()).apply();ChatStore.append(this,"Child",text,"sent");Toast.makeText(this,"Saved for parent",Toast.LENGTH_SHORT).show();finish();});}
+        for(String m:messages){Button replyButton=UiFactory.button(this,m);grid.addView(replyButton,new ViewGroup.LayoutParams(getResources().getDisplayMetrics().widthPixels/2-42,100));replyButton.setOnClickListener(v->{String text=((Button)v).getText().toString();SharedPreferences.Editor ed=getSharedPreferences("p",0).edit();ed.putString("lastChildChatSent",text+" at "+ChatStore.now()).apply();ChatStore.append(this,"Child",text,"sent");Toast.makeText(this,"Saved for parent",Toast.LENGTH_SHORT).show();finish();});}
         root.addView(grid);
         Button close=UiFactory.button(this,"Close");root.addView(close);close.setOnClickListener(v->finish());
         setContentView(root);
