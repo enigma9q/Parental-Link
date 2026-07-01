@@ -15,7 +15,7 @@ public class ChatMessageActivity extends Activity {
         super.onCreate(b);
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setGravity(Gravity.CENTER);root.setPadding(32,32,32,32);root.setBackgroundColor(Color.WHITE);
         TextView title=UiFactory.text(this,"💬\nMessage from parent",24);title.setGravity(Gravity.CENTER);root.addView(title);
-        String msg=getIntent()!=null?getIntent().getStringExtra("message"):""; if(msg==null)msg="";
+        String rawMsg=getIntent()!=null?getIntent().getStringExtra("message"):""; if(rawMsg==null)rawMsg=""; final String msg=rawMsg;
         String stamp=ChatStore.now();
         getSharedPreferences("p",0).edit().putString("lastParentChat",msg+" at "+stamp).putString("lastParentChatSeen","seen at "+stamp).apply();
         ChatStore.append(this,"Parent",msg,"seen");
