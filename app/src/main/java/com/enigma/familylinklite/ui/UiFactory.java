@@ -32,9 +32,13 @@ public final class UiFactory {
         Button button = new Button(activity);
         button.setText(value);
         button.setAllCaps(false);
-        button.setBackgroundColor(Color.TRANSPARENT);
-        button.setTextColor(Color.rgb(25, 118, 210));
-        button.setPadding(18, 10, 18, 10);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.rgb(232, 242, 255));
+        bg.setCornerRadius(22);
+        bg.setStroke(1, Color.rgb(190, 215, 245));
+        button.setBackground(bg);
+        button.setTextColor(Color.rgb(25, 95, 170));
+        button.setPadding(18, 12, 18, 12);
         return button;
     }
 
@@ -59,14 +63,14 @@ public final class UiFactory {
         ScrollView scrollView = new ScrollView(activity);
         scrollView.setFillViewport(false);
         scrollView.setFitsSystemWindows(true);
-        scrollView.setBackgroundColor(Color.WHITE);
+        scrollView.setBackgroundColor(Color.rgb(245,248,252));
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(24, 72, 36, 88);
-        root.setBackgroundColor(Color.WHITE);
+        root.setBackgroundColor(Color.rgb(245,248,252));
         scrollView.addView(root);
         activity.setContentView(scrollView);
-        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.WHITE); activity.getWindow().setNavigationBarColor(Color.WHITE); }
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(245,248,252)); activity.getWindow().setNavigationBarColor(Color.rgb(245,248,252)); }
         return root;
     }
 
@@ -76,9 +80,9 @@ public final class UiFactory {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(24, 72, 36, 88);
         root.setFitsSystemWindows(true);
-        root.setBackgroundColor(Color.WHITE);
+        root.setBackgroundColor(Color.rgb(245,248,252));
         activity.setContentView(root);
-        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.WHITE); activity.getWindow().setNavigationBarColor(Color.WHITE); }
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(245,248,252)); activity.getWindow().setNavigationBarColor(Color.rgb(245,248,252)); }
         return root;
     }
 
