@@ -23,6 +23,7 @@ public final class UiFactory {
         TextView view = new TextView(activity);
         view.setText(value);
         view.setTextSize(sp);
+        view.setTextColor(Color.BLACK);
         view.setPadding(18, 10, 18, 10);
         return view;
     }
@@ -58,14 +59,14 @@ public final class UiFactory {
         ScrollView scrollView = new ScrollView(activity);
         scrollView.setFillViewport(false);
         scrollView.setFitsSystemWindows(true);
-        scrollView.setBackgroundColor(Color.rgb(185, 215, 235));
+        scrollView.setBackgroundColor(Color.WHITE);
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(24, 72, 36, 88);
-        root.setBackgroundColor(Color.rgb(185, 215, 235));
+        root.setBackgroundColor(Color.WHITE);
         scrollView.addView(root);
         activity.setContentView(scrollView);
-        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(95, 145, 180)); activity.getWindow().setNavigationBarColor(Color.rgb(185, 215, 235)); }
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.WHITE); activity.getWindow().setNavigationBarColor(Color.WHITE); }
         return root;
     }
 
@@ -75,9 +76,9 @@ public final class UiFactory {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(24, 72, 36, 88);
         root.setFitsSystemWindows(true);
-        root.setBackgroundColor(Color.rgb(185, 215, 235));
+        root.setBackgroundColor(Color.WHITE);
         activity.setContentView(root);
-        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.rgb(95, 145, 180)); activity.getWindow().setNavigationBarColor(Color.rgb(185, 215, 235)); }
+        if (android.os.Build.VERSION.SDK_INT >= 21) { activity.getWindow().setStatusBarColor(Color.WHITE); activity.getWindow().setNavigationBarColor(Color.WHITE); }
         return root;
     }
 
@@ -105,7 +106,7 @@ public final class UiFactory {
         bar.addView(user, userLp);
         root.addView(bar);
         View divider = new View(activity);
-        divider.setBackgroundColor(Color.rgb(120, 165, 195));
+        divider.setBackgroundColor(Color.rgb(220, 220, 220));
         root.addView(divider, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         user.setOnClickListener(userMenuClick::onClick);
         return name;

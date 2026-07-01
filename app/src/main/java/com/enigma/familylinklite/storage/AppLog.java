@@ -51,7 +51,46 @@ public final class AppLog {
         String x = raw;
         int idx = x.indexOf(" || ");
         if (idx >= 0) x = x.substring(0, idx);
-        return x.replace('\n', ' ').trim();
+        x = x.replace('\n', ' ').trim();
+
+        String time = "";
+        String category = "";
+        String summary = x;
+        int b1 = x.indexOf("[");
+        int b2 = x.indexOf("]");
+        if (b1 > 0 && b2 > b1) {
+            time = x.substring(0, b1).trim();
+            String meta = x.substring(b1 + 1, b2);
+            int slash = meta.indexOf('/');
+            category = slash >= 0 ? meta.substring(0, slash) : meta;
+            summary = x.substring(b2 + 1).trim();
+        }
+
+        String icon = iconFor(category, summary);
+        if (time.length() > 0) return (time + " " + icon + " " + summary).trim();
+        return (icon + " " + summary).trim();
+    }
+
+    public static String iconFor(String category, String summary) {
+        String c = category == null ? "" : category.toLowerCase(Locale.US);
+        String s = summary == null ? "" : summary.toLowerCase(Locale.US);
+        if (s.contains("ping")) return "📢";
+        if (s.contains("timeout")) return "⏱";
+        if (s.contains("disable") || s.contains("lock") || s.contains("bedtime")) return "🔒";
+        if (s.contains("unlock") || s.contains("one-time") || s.contains("password")) return "🔐";
+        if (s.contains("volume")) return s.contains("mute") ? "🔇" : "🔊";
+        if (s.contains("mute")) return "🔇";
+        if (s.contains("chat") || s.contains("message")) return "💬";
+        if (s.contains("call")) return "☎";
+        if (s.contains("app") || s.contains("blocked")) return "📱";
+        if (s.contains("usage")) return "📊";
+        if (s.contains("connected") || s.contains("reconnect") || s.contains("server") || s.contains("status")) return "🔄";
+        if (s.contains("permission") || s.contains("warning") || "security".equals(c)) return "⚠";
+        if (s.contains("failed") || s.contains("error")) return "❌";
+        if ("commands".equals(c)) return "▶";
+        if ("connection".equals(c)) return "🔄";
+        if ("security".equals(c)) return "⚠";
+        return "•";
     }
 
     public static String detail(String raw) {

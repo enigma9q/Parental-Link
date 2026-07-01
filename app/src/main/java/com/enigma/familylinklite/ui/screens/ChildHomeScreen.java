@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.enigma.familylinklite.ui.UiFactory;
+import com.enigma.familylinklite.ui.LanguageManager;
 
 public final class ChildHomeScreen {
     private ChildHomeScreen() {}
@@ -31,19 +32,20 @@ public final class ChildHomeScreen {
             View.OnClickListener unlockSettings,
             View.OnClickListener showHidePairing,
             View.OnClickListener sendAudio,
-            View.OnClickListener callParent
+            View.OnClickListener callParent,
+            boolean chatUnread
     ) {
         PairViews pairViews = new PairViews();
 
-        TextView title = UiFactory.text(activity, "Child tablet", 24);
+        TextView title = UiFactory.text(activity, "Parental-Link", 26);
         title.setGravity(Gravity.CENTER);
         root.addView(title);
 
         LinearLayout statusCard = card(activity);
-        TextView status = UiFactory.text(activity, connected ? "Connected" : "Waiting for parent", 18);
+        TextView status = UiFactory.text(activity, connected ? "🟢 "+activity.getString(com.enigma.familylinklite.R.string.connected) : "⚫ "+activity.getString(com.enigma.familylinklite.R.string.waiting_for_parent), 20);
         status.setGravity(Gravity.CENTER);
         statusCard.addView(status);
-        TextView parent = UiFactory.text(activity, connected ? "Parent: " + parentName : "No parent connected yet", 15);
+        TextView parent = UiFactory.text(activity, connected ? "Parent: " + parentName : "Pair this device with a parent phone.", 16);
         parent.setGravity(Gravity.CENTER);
         statusCard.addView(parent);
         root.addView(statusCard);
@@ -64,32 +66,32 @@ public final class ChildHomeScreen {
             LinearLayout.LayoutParams qlp = new LinearLayout.LayoutParams(240, 240);
             qlp.gravity = Gravity.CENTER_HORIZONTAL;
             pairing.addView(pairViews.qr, qlp);
-            TextView info = UiFactory.text(activity, "Show this code or QR to a parent phone.", 14);
+            TextView info = UiFactory.text(activity, connected ? "Pairing details are normally hidden after setup." : "Show this code or QR to a parent phone.", 14);
             info.setGravity(Gravity.CENTER);
             pairing.addView(info);
             root.addView(pairing);
         }
 
         if (connected) {
-            Button togglePairing = UiFactory.button(activity, showPairingDetails ? "Hide pairing details" : "Show pairing details");
+            Button togglePairing = UiFactory.button(activity, showPairingDetails ? activity.getString(com.enigma.familylinklite.R.string.hide_pairing_details) : activity.getString(com.enigma.familylinklite.R.string.show_pairing_details));
             root.addView(togglePairing);
             togglePairing.setOnClickListener(showHidePairing);
         }
 
         LinearLayout actions = card(activity);
         actions.addView(UiFactory.text(activity, "Actions", 18));
-        Button restart = UiFactory.button(activity, "Restart server");
-        Button unlock = UiFactory.button(activity, "Unlock settings");
-        Button audio = UiFactory.button(activity, "Send audio to parent");
-        Button call = UiFactory.button(activity, "Call parent");
-        actions.addView(restart);
-        actions.addView(unlock);
+        Button chat = UiFactory.button(activity, chatUnread ? activity.getString(com.enigma.familylinklite.R.string.chat)+" • new" : activity.getString(com.enigma.familylinklite.R.string.chat));
+        Button audio = UiFactory.button(activity, "Send audio");
+        Button unlock = UiFactory.button(activity, activity.getString(com.enigma.familylinklite.R.string.unlock_settings));
+        Button restart = UiFactory.button(activity, activity.getString(com.enigma.familylinklite.R.string.restart_server));
+        actions.addView(chat);
         actions.addView(audio);
-        actions.addView(call);
-        restart.setOnClickListener(restartServer);
-        unlock.setOnClickListener(unlockSettings);
+        actions.addView(unlock);
+        actions.addView(restart);
+        chat.setOnClickListener(callParent);
         audio.setOnClickListener(sendAudio);
-        call.setOnClickListener(callParent);
+        unlock.setOnClickListener(unlockSettings);
+        restart.setOnClickListener(restartServer);
         root.addView(actions);
 
         LinearLayout permissionCard = card(activity);
@@ -109,7 +111,7 @@ public final class ChildHomeScreen {
         LinearLayout card = new LinearLayout(activity);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(22, 18, 22, 18);
-        card.setBackgroundColor(Color.rgb(218, 237, 248));
+        card.setBackgroundColor(Color.WHITE);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 10, 0, 10);
         card.setLayoutParams(lp);
