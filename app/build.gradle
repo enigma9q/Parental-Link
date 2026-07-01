@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 
 android { namespace 'com.enigma.familylinklite'; compileSdk 35
     signingConfigs { shared { storeFile file('familylink-lite.keystore'); storePassword 'familylinklite'; keyAlias 'familylinklite'; keyPassword 'familylinklite' } }
-    defaultConfig { applicationId 'com.enigma.familylinklite'; minSdk 26; targetSdk 35; versionCode 20919; versionName '2.9.19' }
+    defaultConfig { applicationId 'com.enigma.familylinklite'; minSdk 26; targetSdk 35; versionCode 20920; versionName '2.9.20' }
     buildTypes { debug { signingConfig signingConfigs.shared }; release { signingConfig signingConfigs.shared } }
 }
 
