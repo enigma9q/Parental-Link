@@ -1,15 +1,17 @@
-# Parental-Link v2.9.21
+# Parental-Link v2.9.22
 
-Parent interface correction build.
+Focused parent-dashboard Java UI correction.
 
-- Rebuilt the real parent dashboard closer to the approved dark mockup.
-- Added a stronger child status/hero card with status pills.
-- Replaced the old 4-column text-button grid with larger 2-column action cards.
-- Kept merged Disable/Enable and Timeout/Stop Timeout buttons.
-- Kept two custom + quick-action slots.
-- Kept fixed Requests area and compact Activity card.
-- Added bottom quick row: Refresh, Devices, Interface.
-- Kept blue PL mark behaviour.
-- Version bumped to 2.9.21 / 20921.
+Changes:
+- Final Java attempt to make the real parent dashboard closer to the approved mockup.
+- Reduced dashboard padding and card spacing.
+- Rebuilt parent child-status card as a compact card.
+- Replaced oversized two-column action blocks with one compact row of four action tiles.
+- Removed the second dashboard action row to keep Activity visible on the first screen.
+- Kept core controls on the dashboard: Block/Enable, Timeout/Stop, Sound, Ring.
+- Moved extra/custom actions behind More / Interface settings instead of occupying the dashboard.
+- Made Requests card shorter while keeping it fixed.
+- Made Activity rows smaller and limited them to three visible lines.
+- Stale/old sync now uses warning/error coloring instead of positive blue.
 
-Build note: Gradle was not run locally in the ChatGPT environment.
+Version bumped to 2.9.22 / 20922.
