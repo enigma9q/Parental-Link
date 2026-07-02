@@ -10,8 +10,15 @@ public class ParentMonitorService extends Service{
         android.content.SharedPreferences p=getSharedPreferences("p",0);
         String title="Parental-Link";
         String text=notificationSummary(p);
-        startForeground(3,notification(title,text));
-        return START_STICKY;
+        try{
+            startForeground(3,notification(title,text));
+        }catch(Exception ignored){}
+        final int sid=startId;
+        new Handler(Looper.getMainLooper()).postDelayed(()->{
+            try{stopForeground(STOP_FOREGROUND_REMOVE);}catch(Exception ignored){}
+            try{stopSelf(sid);}catch(Exception ignored){}
+        },1500L);
+        return START_NOT_STICKY;
     }
 
     String notificationSummary(android.content.SharedPreferences p){
@@ -51,7 +58,7 @@ public class ParentMonitorService extends Service{
     Notification notification(String title,String text){
         Intent i=new Intent(this,MainActivity.class);
         PendingIntent pi=PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_IMMUTABLE);
-        return new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(android.R.drawable.ic_dialog_info).setContentIntent(pi).setOngoing(true).build();
+        return new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(android.R.drawable.ic_dialog_info).setContentIntent(pi).setOngoing(false).build();
     }
     String firstLine(String text){if(text==null)return "";int n=text.indexOf('\n');return n>=0?text.substring(0,n):text;}
     String cleanAppName(String raw){

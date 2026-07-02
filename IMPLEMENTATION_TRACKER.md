@@ -155,3 +155,14 @@ Controlled dashboard test.
 - Compose dashboard can now be tested manually without creating a startup crash loop.
 - Removed/neutralised direct child-side stop-monitoring/remove wording.
 - Child removal remains through authorised pending-removal flow.
+
+
+## v3.2.10
+
+Foreground-service timeout crash fix.
+
+- Crash log showed `ParentMonitorService` foreground dataSync timeout.
+- ParentMonitorService is now short-lived and non-sticky.
+- It calls `stopForeground(STOP_FOREGROUND_REMOVE)` and `stopSelf(startId)`.
+- Notification is no longer ongoing.
+- Diagnostic/dashboard paths avoid automatic parent monitor service starts where present.

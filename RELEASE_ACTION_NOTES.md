@@ -1,43 +1,35 @@
-# Parental-Link v3.2.9
+# Parental-Link v3.2.10
 
-Controlled Compose dashboard reintroduction and child-side removal cleanup.
+Foreground service timeout crash fix.
 
-## Dashboard crash testing
+## Crash diagnosis
 
-The safe Java dashboard remains the default.
+The v3.2.9 crash log points to:
 
-Added button:
+- `ParentMonitorService`
+- `ForegroundServiceDidNotStopInTimeException`
+- foreground service type: `dataSync`
 
-- `Open Compose dashboard test`
+This means Android 16 killed the app because the foreground service did not stop within the platform timeout.
 
-This manually opens the Compose dashboard. If it crashes, the app should reopen to the safe Java dashboard and the crash can be retrieved through:
+## Fixed / changed
 
-- Start screen → Show crash log
-- Safe Java dashboard → Show crash log
-
-## Child app removal cleanup
-
-Removed/neutralised direct child-side “stop monitoring / remove Parental-Link” UI wording.
-
-Child removal should now go through the authorised removal flow:
-
-1. Parent sends removal request.
-2. Child receives removal pending state.
-3. Child opens removal authorisation screen.
-4. Child authorises with master password / parent password if set.
-5. Or child chooses Keep monitoring.
+- `ParentMonitorService` now returns `START_NOT_STICKY`.
+- `ParentMonitorService` stops foreground mode and calls `stopSelf(startId)` after a short diagnostic notification window.
+- Parent monitor notification is no longer ongoing.
+- Automatic parent monitor starts from diagnostic/dashboard paths are disabled where present.
 
 ## Preserved
 
-- Safe Java dashboard
-- Crash log exporter
-- Start screen Show crash log
-- Child pairing state fixes
-- Child removal pending authorisation
-- Reinitialise pairing
+- Safe Java dashboard remains default.
+- `Open Compose dashboard test` remains available.
+- Crash log exporter remains available from start screen and safe dashboard.
+- Child pairing/link state fixes remain.
+- Child removal authorisation flow remains.
+- Reinitialise pairing remains.
 
 ## Version
 
-- `versionCode 32009`
-- `versionName 3.2.9`
-- `APP_VERSION 3.2.9`
+- `versionCode 32010`
+- `versionName 3.2.10`
+- `APP_VERSION 3.2.10`
