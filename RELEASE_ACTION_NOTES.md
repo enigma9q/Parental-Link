@@ -1,22 +1,28 @@
-# Parental-Link v3.0.0
+# Parental-Link v3.0.4
 
-First Kotlin/Compose parent dashboard build.
+Build-stability fix after v3.0.3.
 
-## Scope
+## Fixed
 
-- Keeps Java services, protocol, storage, child service, parent monitor and legacy screens.
-- Replaces the parent dashboard surface with a Kotlin/Compose dashboard.
-- Other screens still use LegacyMainActivity Java screens.
-- Core controls only: Block/Enable, Timeout/Stop, Sound, Ring, Requests, Activity, Devices, Interface.
+GitHub Actions passed the duplicate MainActivity stage, but failed during DEX merge with:
+
+- `D8: java.lang.OutOfMemoryError: Java heap space`
+- `:app:mergeDexRelease FAILED`
+
+This version increases Gradle/D8 memory and reduces worker pressure.
 
 ## Changes
 
-- Enabled Jetpack Compose in Gradle.
-- Added Compose dependencies through the Compose BOM.
-- MainActivity.kt now overrides the parent dashboard only.
-- LegacyMainActivity remains as the core Java implementation and exposes safe bridge methods for Compose.
-- Version bumped to 3.0.0 / versionCode 30000.
+- Added/updated `gradle.properties`:
+  - `org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8`
+  - `org.gradle.workers.max=2`
+  - `android.enableR8.fullMode=false`
+  - keeps `android.useAndroidX=true`
+- Updated release workflow build command:
+  - `gradle clean assembleRelease --no-daemon --stacktrace`
+- Bumped:
+  - `versionCode 30004`
+  - `versionName 3.0.4`
+  - `APP_VERSION 3.0.4`
 
-## Notes
-
-This is the first Compose migration step. If it builds, parent dashboard UI iteration should continue in Kotlin/Compose instead of Java.
+No feature or UI changes.

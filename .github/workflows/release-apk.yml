@@ -65,7 +65,7 @@ jobs:
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Build release APK
-        run: gradle assembleRelease --stacktrace
+        run: gradle clean assembleRelease --no-daemon --stacktrace
 
       - name: Prepare APK asset
         shell: bash
