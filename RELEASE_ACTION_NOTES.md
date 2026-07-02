@@ -1,31 +1,22 @@
-# Parental-Link v2.9.23
+# Parental-Link v3.0.0
 
-Focused Java UI attempt for the parent dashboard child-status card only.
+First Kotlin/Compose parent dashboard build.
 
-Changes:
-- Rebuilt only the parent dashboard child card.
-- More mockup-like structure:
-  - circular child avatar on the left
-  - child name and status pill on top
-  - compact battery / Wi-Fi metrics row
-  - current app row with subtitle
-  - active state row with subtitle
-- Current app display now hides package names where possible, e.g. `One UI Home` instead of `One UI Home (com.sec.android.app.launcher)`.
-- Pairing repair remains available when mismatch is detected.
+## Scope
 
-No changes:
-- no child UI changes
-- no protocol changes
-- no notification changes
-- no new features
-- no dashboard action changes
+- Keeps Java services, protocol, storage, child service, parent monitor and legacy screens.
+- Replaces the parent dashboard surface with a Kotlin/Compose dashboard.
+- Other screens still use LegacyMainActivity Java screens.
+- Core controls only: Block/Enable, Timeout/Stop, Sound, Ring, Requests, Activity, Devices, Interface.
 
-Version:
-- versionCode 20923
-- versionName 2.9.23
-- APP_VERSION 2.9.23
+## Changes
 
-Checks:
-- Java static scan passed
-- version consistency passed
-- real Gradle build not run locally in this environment
+- Enabled Jetpack Compose in Gradle.
+- Added Compose dependencies through the Compose BOM.
+- MainActivity.kt now overrides the parent dashboard only.
+- LegacyMainActivity remains as the core Java implementation and exposes safe bridge methods for Compose.
+- Version bumped to 3.0.0 / versionCode 30000.
+
+## Notes
+
+This is the first Compose migration step. If it builds, parent dashboard UI iteration should continue in Kotlin/Compose instead of Java.
