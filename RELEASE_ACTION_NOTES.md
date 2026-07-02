@@ -1,29 +1,29 @@
-# Parental-Link v3.2.1
+# Parental-Link v3.2.3
 
-Structural duplicate-class avoidance build.
+Backlog-only update.
 
-## Why
+## Added backlog item
 
-v3.2.0 still failed in GitHub Actions because the repository retained stale `MainActivity` files. D8 reported:
+- Lost connection / possible reset recovery
 
-- `Type com.enigma.familylinklite.MainActivity is defined multiple times`
+## Summary
 
-## Changed
+When one side loses connection but the IP still appears to host a Parental-Link server, the app should treat this as a possible reset/reinstall/data-clear/pairing mismatch, not simply offline.
 
-- Added new Kotlin launcher:
-  - `AppEntryActivity.kt`
-- Manifest now launches:
-  - `.AppEntryActivity`
-- The app no longer relies on the class name `MainActivity`.
-- Startup still bypasses parent biometric/PIN lock.
-- Parent dashboard remains Compose.
+Proposed recovery:
 
-## Intention
+- detect “server reachable but pairing/auth mismatch”
+- show a clear warning
+- offer retry, QR repair, or local reset after master password/PIN
+- never auto-reset silently
+- log the event
 
-This build should avoid duplicate-class failures even if stale `MainActivity.java` or `MainActivity.kt` remains in the GitHub repository temporarily.
+## No functional code changes
+
+This package only records the backlog item and bumps version metadata.
 
 ## Version
 
-- `versionCode 32001`
-- `versionName 3.2.1`
-- `APP_VERSION 3.2.1`
+- `versionCode 32003`
+- `versionName 3.2.3`
+- `APP_VERSION 3.2.3`

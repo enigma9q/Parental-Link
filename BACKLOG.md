@@ -1,24 +1,3 @@
-# Parental-Link implementation tracker
-
-Version: 3.2.2
-
-## Pairing change
-
-- Child QR now includes both pairing code and child IP:
-  - `family-link://pair?code=<code>&ip=<child-ip>`
-- Parent QR scan parses the IP and starts pairing immediately.
-- Pairing success now opens a stable success screen instead of forcing the dashboard immediately.
-
-## Reason
-
-The app opened after clearing app data, but crashed when connecting to the child. This build isolates pairing from dashboard launch.
-
-## Launcher status
-
-- Manifest launcher remains `.AppEntryActivity`.
-- Parent biometric/PIN startup remains bypassed.
-
-
 # Backlog
 
 ## Lost connection / possible reset recovery
