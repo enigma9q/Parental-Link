@@ -1,17 +1,31 @@
-# Parental-Link v2.9.22
+# Parental-Link v2.9.23
 
-Focused parent-dashboard Java UI correction.
+Focused Java UI attempt for the parent dashboard child-status card only.
 
 Changes:
-- Final Java attempt to make the real parent dashboard closer to the approved mockup.
-- Reduced dashboard padding and card spacing.
-- Rebuilt parent child-status card as a compact card.
-- Replaced oversized two-column action blocks with one compact row of four action tiles.
-- Removed the second dashboard action row to keep Activity visible on the first screen.
-- Kept core controls on the dashboard: Block/Enable, Timeout/Stop, Sound, Ring.
-- Moved extra/custom actions behind More / Interface settings instead of occupying the dashboard.
-- Made Requests card shorter while keeping it fixed.
-- Made Activity rows smaller and limited them to three visible lines.
-- Stale/old sync now uses warning/error coloring instead of positive blue.
+- Rebuilt only the parent dashboard child card.
+- More mockup-like structure:
+  - circular child avatar on the left
+  - child name and status pill on top
+  - compact battery / Wi-Fi metrics row
+  - current app row with subtitle
+  - active state row with subtitle
+- Current app display now hides package names where possible, e.g. `One UI Home` instead of `One UI Home (com.sec.android.app.launcher)`.
+- Pairing repair remains available when mismatch is detected.
 
-Version bumped to 2.9.22 / 20922.
+No changes:
+- no child UI changes
+- no protocol changes
+- no notification changes
+- no new features
+- no dashboard action changes
+
+Version:
+- versionCode 20923
+- versionName 2.9.23
+- APP_VERSION 2.9.23
+
+Checks:
+- Java static scan passed
+- version consistency passed
+- real Gradle build not run locally in this environment

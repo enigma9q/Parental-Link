@@ -10,3 +10,6 @@ Parental-Link is a local Wi-Fi parental control app. This package is a UI correc
 - Correct `PL` mark.
 
 See `RELEASE_ACTION_NOTES.md` for details.
+
+## v2.9.23
+Focused parent child-card polish only. See RELEASE_ACTION_NOTES.md.

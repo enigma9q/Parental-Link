@@ -72,20 +72,106 @@ public class MainActivity extends Activity{
     TextView parentMiniButton(String icon,String label){TextView b=tv(icon+"  "+label,12);b.setGravity(Gravity.CENTER);b.setSingleLine(true);b.setIncludeFontPadding(false);b.setBackground(UiFactory.rounded(this,UiFactory.panel2(this),13));b.setPadding(UiFactory.dp(this,4),0,UiFactory.dp(this,4),0);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,UiFactory.dp(this,42),1);lp.setMargins(UiFactory.dp(this,3),0,UiFactory.dp(this,3),0);b.setLayoutParams(lp);return b;}
     LinearLayout parentHeaderCard(SharedPreferences p){
         LinearLayout card=dashboardCard();
-        card.setPadding(UiFactory.dp(this,12),UiFactory.dp(this,10),UiFactory.dp(this,12),UiFactory.dp(this,10));
-        LinearLayout top=new LinearLayout(this);top.setOrientation(LinearLayout.HORIZONTAL);top.setGravity(Gravity.CENTER_VERTICAL);
-        TextView avatar=tv("👦",26);avatar.setGravity(Gravity.CENTER);avatar.setIncludeFontPadding(false);
-        android.graphics.drawable.GradientDrawable av=new android.graphics.drawable.GradientDrawable();av.setShape(android.graphics.drawable.GradientDrawable.OVAL);av.setColor(UiFactory.isDark(this)?Color.rgb(31,48,70):Color.rgb(220,235,255));avatar.setBackground(av);
-        top.addView(avatar,new LinearLayout.LayoutParams(UiFactory.dp(this,48),UiFactory.dp(this,48)));
-        LinearLayout info=new LinearLayout(this);info.setOrientation(LinearLayout.VERTICAL);info.setPadding(UiFactory.dp(this,10),0,0,0);
-        TextView name=tv(new DeviceProfile(this).childNickname(),17);name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);name.setPadding(0,0,0,0);info.addView(name);
-        String state=p.getBoolean("parentTimeoutActive",false)?"Timeout":(p.getBoolean("parentChildDisabled",false)?"Blocked":"Ready");
-        LinearLayout pills=new LinearLayout(this);pills.setOrientation(LinearLayout.HORIZONTAL);pills.addView(statusPill(state,p.getBoolean("parentChildDisabled",false)||p.getBoolean("parentTimeoutActive",false)?UiFactory.red():UiFactory.green()));pills.addView(statusPill(shortConnectionLine(),connectionColor()));info.addView(pills);
-        TextView meta=UiFactory.mutedText(this,"Battery "+p.getInt("remoteBattery",78)+"%  •  "+currentAppDisplay(),12);meta.setSingleLine(true);info.addView(meta);
-        top.addView(info,new LinearLayout.LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,1));
-        card.addView(top);
-        if(p.getBoolean("pairingMismatch",false)){TextView repair=parentActionTile("🔧","Repair pairing",UiFactory.red());card.addView(repair);repair.setOnClickListener(v->showRepairPairingScreen());}
+        card.setPadding(UiFactory.dp(this,14),UiFactory.dp(this,12),UiFactory.dp(this,14),UiFactory.dp(this,12));
+        LinearLayout row=new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+
+        TextView avatar=tv("👦",32);
+        avatar.setGravity(Gravity.CENTER);
+        avatar.setIncludeFontPadding(false);
+        android.graphics.drawable.GradientDrawable av=new android.graphics.drawable.GradientDrawable();
+        av.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        av.setColor(UiFactory.isDark(this)?Color.rgb(34,52,77):Color.rgb(218,234,255));
+        avatar.setBackground(av);
+        LinearLayout.LayoutParams avlp=new LinearLayout.LayoutParams(UiFactory.dp(this,66),UiFactory.dp(this,66));
+        avlp.setMargins(0,0,UiFactory.dp(this,13),0);
+        row.addView(avatar,avlp);
+
+        LinearLayout info=new LinearLayout(this);
+        info.setOrientation(LinearLayout.VERTICAL);
+        info.setPadding(0,0,0,0);
+
+        LinearLayout head=new LinearLayout(this);
+        head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        TextView name=tv(new DeviceProfile(this).childNickname(),19);
+        name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        name.setSingleLine(true);
+        name.setIncludeFontPadding(false);
+        name.setPadding(0,0,UiFactory.dp(this,6),0);
+        head.addView(name,new LinearLayout.LayoutParams(0,UiFactory.dp(this,28),1));
+        head.addView(statusPill(shortConnectionLine(),connectionColor()));
+        info.addView(head,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,UiFactory.dp(this,30)));
+
+        LinearLayout metrics=new LinearLayout(this);
+        metrics.setOrientation(LinearLayout.HORIZONTAL);
+        metrics.setGravity(Gravity.CENTER_VERTICAL);
+        TextView battery=smallMetric("▣",p.getInt("remoteBattery",78)+"%");
+        TextView wifi=smallMetric("⌁","Wi‑Fi connected");
+        metrics.addView(battery,new LinearLayout.LayoutParams(0,UiFactory.dp(this,24),1));
+        metrics.addView(wifi,new LinearLayout.LayoutParams(0,UiFactory.dp(this,24),1));
+        info.addView(metrics);
+
+        String app=cleanCurrentAppName(currentAppDisplay());
+        info.addView(cardInfoLine("▶",app,"Current app"));
+        String state=p.getBoolean("parentTimeoutActive",false)?"Timeout active":(p.getBoolean("parentChildDisabled",false)?"Device disabled":"Ready");
+        String sub=p.getBoolean("parentTimeoutActive",false)||p.getBoolean("parentChildDisabled",false)?"Active state":"Normal access";
+        info.addView(cardInfoLine(p.getBoolean("parentTimeoutActive",false)?"⏳":(p.getBoolean("parentChildDisabled",false)?"🔒":"✓"),state,sub));
+
+        row.addView(info,new LinearLayout.LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,1));
+        card.addView(row);
+        if(p.getBoolean("pairingMismatch",false)){
+            TextView repair=parentActionTile("🔧","Repair pairing",UiFactory.red());
+            LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,UiFactory.dp(this,42));
+            rlp.setMargins(0,UiFactory.dp(this,8),0,0);
+            card.addView(repair,rlp);
+            repair.setOnClickListener(v->showRepairPairingScreen());
+        }
         return card;
+    }
+    TextView smallMetric(String icon,String text){
+        TextView v=UiFactory.mutedText(this,icon+"  "+text,12);
+        v.setSingleLine(true);
+        v.setIncludeFontPadding(false);
+        v.setGravity(Gravity.CENTER_VERTICAL);
+        v.setPadding(0,0,UiFactory.dp(this,5),0);
+        return v;
+    }
+    LinearLayout cardInfoLine(String icon,String title,String subtitle){
+        LinearLayout line=new LinearLayout(this);
+        line.setOrientation(LinearLayout.HORIZONTAL);
+        line.setGravity(Gravity.CENTER_VERTICAL);
+        line.setPadding(0,UiFactory.dp(this,1),0,UiFactory.dp(this,1));
+        TextView ic=tv(icon,16);
+        ic.setGravity(Gravity.CENTER);
+        ic.setIncludeFontPadding(false);
+        ic.setPadding(0,0,UiFactory.dp(this,7),0);
+        line.addView(ic,new LinearLayout.LayoutParams(UiFactory.dp(this,26),UiFactory.dp(this,30)));
+        LinearLayout texts=new LinearLayout(this);
+        texts.setOrientation(LinearLayout.VERTICAL);
+        TextView t=tv(title,13);
+        t.setSingleLine(true);
+        t.setIncludeFontPadding(false);
+        t.setPadding(0,0,0,0);
+        TextView sub=UiFactory.mutedText(this,subtitle,10);
+        sub.setSingleLine(true);
+        sub.setIncludeFontPadding(false);
+        sub.setPadding(0,0,0,0);
+        texts.addView(t,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,UiFactory.dp(this,16)));
+        texts.addView(sub,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,UiFactory.dp(this,13)));
+        line.addView(texts,new LinearLayout.LayoutParams(0,UiFactory.dp(this,30),1));
+        return line;
+    }
+    String cleanCurrentAppName(String app){
+        if(app==null||app.trim().length()==0||"unknown".equalsIgnoreCase(app.trim()))return "Unknown";
+        String a=app.trim();
+        int par=a.indexOf(" (");
+        if(par>0)a=a.substring(0,par).trim();
+        if(a.equals("com.sec.android.app.launcher"))return "One UI Home";
+        if(a.equals("com.google.android.youtube"))return "YouTube";
+        if(a.startsWith("com.")||a.startsWith("org."))return a.substring(a.lastIndexOf('.')+1);
+        return a;
     }
     TextView statusPill(String text,int color){TextView v=tv(text,11);v.setSingleLine(true);v.setGravity(Gravity.CENTER);v.setTextColor(Color.WHITE);v.setIncludeFontPadding(false);android.graphics.drawable.GradientDrawable g=new android.graphics.drawable.GradientDrawable();g.setColor(color);g.setCornerRadius(UiFactory.dp(this,999));v.setBackground(g);v.setPadding(UiFactory.dp(this,8),0,UiFactory.dp(this,8),0);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,UiFactory.dp(this,22));lp.setMargins(0,UiFactory.dp(this,3),UiFactory.dp(this,6),UiFactory.dp(this,4));v.setLayoutParams(lp);return v;}
     String shortConnectionLine(){SharedPreferences p=getSharedPreferences("p",0);if(p.getBoolean("pairingMismatch",false))return "Pairing issue";long last=p.getLong("lastStatusMs",0);if(last<=0)return "No status";long age=(System.currentTimeMillis()-last)/60000;if(age<2)return "Online";if(age<30)return age+"m ago";return "Stale";}
