@@ -1,14 +1,15 @@
-# Parental-Link v2.9.20
+# Parental-Link v2.9.21
 
-Bug-fix build.
+Parent interface correction build.
 
-- Fixed GitHub Actions compile failure by removing unsupported `IntentIntegrator.QR_CODE_TYPES` usage.
-- QR scanner still launches safely; if unavailable, parent can enter the pairing code manually.
-- Added Samsung-safe quick-message fallback for child devices:
-  - banner mode uses overlay-style screen only when overlay permission is available;
-  - otherwise it uses a high-priority child notification with Dismiss and Snooze 5 min actions;
-  - full-screen and blocking messages still use the full-screen Activity path.
-- Added `ChildQuickActionReceiver` to record notification Dismiss/Snooze responses for parent status refresh.
-- Bumped version to 2.9.20 / 20920.
+- Rebuilt the real parent dashboard closer to the approved dark mockup.
+- Added a stronger child status/hero card with status pills.
+- Replaced the old 4-column text-button grid with larger 2-column action cards.
+- Kept merged Disable/Enable and Timeout/Stop Timeout buttons.
+- Kept two custom + quick-action slots.
+- Kept fixed Requests area and compact Activity card.
+- Added bottom quick row: Refresh, Devices, Interface.
+- Kept blue PL mark behaviour.
+- Version bumped to 2.9.21 / 20921.
 
-Checks: static Java scan, version consistency. Real Gradle build not run locally.
+Build note: Gradle was not run locally in the ChatGPT environment.
