@@ -1,48 +1,22 @@
-# Parental-Link v3.1.0
+# Parental-Link v3.1.1
 
-Kotlin-screen migration start and biometric crash isolation build.
+Compile fix after v3.1.0.
 
-## Purpose
+## Fixed
 
-The app reportedly crashes after biometric unlock. This build stops using the old Java parent lock screen and moves the parent lock flow into Kotlin/Compose.
+GitHub Actions failed at Kotlin compile:
 
-## Migrated to Kotlin/Compose
+- `Unresolved reference: PillButton`
+- Location: `ComposeMainActivity.kt`
 
-- Parent app lock screen.
-- Parent PIN creation screen.
-- Parent PIN pad screen.
-- Biometric unlock result handling.
-- Parent dashboard remains Compose.
+This version replaces that missing composable call with a standard Material `Button`.
 
-## Still Java-backed
+## No functional changes
 
-The Kotlin screens still call existing Java backend methods for:
-
-- biometric launch
-- unlock state reset
-- wrong PIN attempt registration
-- dashboard commands
-- monitor refresh
-- device actions
-
-## Implementation tracking
-
-Added:
-
-- `IMPLEMENTATION_TRACKER.md`
-
-This file records which screens are Kotlin and which are still Java-screen based.
-
-## Build settings kept
-
-- AndroidX enabled.
-- Java/Kotlin JVM target aligned to 17.
-- Gradle/D8 heap increased.
-- Worker pressure reduced.
-- Release workflow uses clean no-daemon build.
+No new screens, commands, services, protocol, storage or UI behaviour were changed beyond the compile fix.
 
 ## Version
 
-- `versionCode 31000`
-- `versionName 3.1.0`
-- `APP_VERSION 3.1.0`
+- `versionCode 31001`
+- `versionName 3.1.1`
+- `APP_VERSION 3.1.1`

@@ -1,6 +1,6 @@
 # Parental-Link implementation tracker
 
-Version: 3.1.0
+Version: 3.1.1
 
 ## Current architecture
 
@@ -90,3 +90,9 @@ Mitigation in v3.1.0:
 - Existing Java backend method `unlockParentApp(...)` is still used to reset lock state and open dashboard.
 
 If the crash continues after v3.1.0, the next step is to remove the Java Activity bridge and make Kotlin `MainActivity` the direct Android entry point.
+
+
+## v3.1.1
+
+- Fixed Kotlin compile error in parent lock screen by replacing missing `PillButton` reference with a Material `Button`.
+- No screen migration changes.

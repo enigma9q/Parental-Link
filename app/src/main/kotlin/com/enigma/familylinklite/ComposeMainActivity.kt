@@ -200,7 +200,7 @@ open class ComposeMainActivity : LegacyMainActivity() {
 
             if (canUseDeviceCredential()) {
                 Spacer(Modifier.height(8.dp))
-                PillButton("Use biometrics", blue, text) { launchDeviceCredential() }
+                Button(onClick = { launchDeviceCredential() }) { Text("Use biometrics") }
             }
         }
     }
