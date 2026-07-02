@@ -29,12 +29,14 @@ public final class UiFactory {
         return night == Configuration.UI_MODE_NIGHT_YES;
     }
 
-    public static int bg(Activity a) { return isDark(a) ? Color.rgb(7, 12, 17) : Color.rgb(245, 248, 252); }
-    public static int panel(Activity a) { return isDark(a) ? Color.rgb(20, 26, 32) : Color.WHITE; }
-    public static int panel2(Activity a) { return isDark(a) ? Color.rgb(27, 34, 41) : Color.rgb(232, 242, 255); }
+    public static int bg(Activity a) { return isDark(a) ? Color.rgb(7, 12, 17) : Color.rgb(246, 249, 253); }
+    public static int panel(Activity a) { return isDark(a) ? Color.rgb(18, 24, 31) : Color.WHITE; }
+    public static int panel2(Activity a) { return isDark(a) ? Color.rgb(24, 32, 42) : Color.rgb(230, 240, 252); }
     public static int textColor(Activity a) { return isDark(a) ? Color.rgb(242, 246, 250) : Color.rgb(18, 26, 34); }
     public static int mutedTextColor(Activity a) { return isDark(a) ? Color.rgb(172, 181, 190) : Color.rgb(82, 96, 112); }
-    public static int border(Activity a) { return isDark(a) ? Color.rgb(50, 60, 70) : Color.rgb(210, 225, 235); }
+    public static int border(Activity a) { return isDark(a) ? Color.rgb(43, 53, 65) : Color.rgb(210, 222, 235); }
+    public static int menuBg(Activity a) { return isDark(a) ? Color.rgb(12, 17, 23) : Color.rgb(235, 242, 250); }
+    public static int menuRow(Activity a) { return isDark(a) ? Color.rgb(22, 29, 38) : Color.WHITE; }
     public static int blue() { return Color.rgb(22, 122, 255); }
     public static int green() { return Color.rgb(48, 196, 82); }
     public static int red() { return Color.rgb(245, 80, 86); }

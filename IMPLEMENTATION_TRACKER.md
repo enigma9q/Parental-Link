@@ -185,3 +185,13 @@ Java dashboard restoration and Compose crash guard.
 - Parent launch returns to the styled Java dashboard instead of the diagnostic safe shell.
 - Compose dashboard test no longer attaches ComposeView until the activity lifecycle migration is fixed.
 - Parent action grid now matches the requested dashboard layout more closely with eight tiles and two custom slots.
+
+## v3.2.13
+
+Java dashboard final polish pass.
+
+- Request card keeps stable height with a `No requests` empty state.
+- Request card shows a count and supports horizontal swipe when more than one request exists.
+- Swipe menus use framed menu backgrounds and row cards.
+- Interface settings gained a direct dark/light/system selector and card rows.
+- Light mode colors tuned for a basic white interface.
