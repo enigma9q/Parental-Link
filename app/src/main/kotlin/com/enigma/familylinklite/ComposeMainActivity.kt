@@ -1,6 +1,15 @@
 package com.enigma.familylinklite
 
 import android.os.Bundle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Button
+import androidx.compose.foundation.text.KeyboardOptions
+import android.content.Intent
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,6 +69,186 @@ open class ComposeMainActivity : LegacyMainActivity() {
             composeScheduleAutoRefresh()
         }
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == AUTH_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    unlockParentApp("biometrics")
+                } catch (_: Exception) {
+                    showConnectedParent(false)
+                }
+            } else {
+                toast("Unlock cancelled")
+            }
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun showParentAppLock() {
+        setContentView(
+            ComposeView(this).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                setContent { ParentLockScreen() }
+            }
+        )
+    }
+
+    @Composable
+    private fun ParentLockScreen() {
+        val prefs = getSharedPreferences("p", 0)
+        val savedPin = prefs.getString("appPin", "") ?: ""
+        val lockUntil = prefs.getLong("pinLockUntil", 0L)
+        val now = System.currentTimeMillis()
+        val bg = Color(0xFF071014)
+        val card = Color(0xFF151B22)
+        val blue = Color(0xFF1683FF)
+        val red = Color(0xFFFF5065)
+        val muted = Color(0xFFAAB2BD)
+        val text = Color(0xFFF4F7FA)
+
+        if (savedPin.isNotEmpty() && lockUntil <= now && canUseDeviceCredential()) {
+            LaunchedEffect(Unit) {
+                launchDeviceCredential()
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bg)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(34.dp))
+            Text("Parental-Link", color = text, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(6.dp))
+            Text("Unlock parent dashboard", color = muted, fontSize = 16.sp)
+            Spacer(Modifier.height(20.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(card, RoundedCornerShape(24.dp))
+                    .border(1.dp, Color(0x2235D061), RoundedCornerShape(24.dp))
+                    .padding(18.dp)
+            ) {
+                if (lockUntil > now) {
+                    val remaining = ((lockUntil - now + 999L) / 1000L).coerceAtLeast(1L)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        Text("Too many wrong attempts", color = red, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        Text("Try again in $remaining seconds.", color = muted, fontSize = 15.sp)
+                    }
+                } else if (savedPin.isEmpty()) {
+                    CreatePinCard(text, muted, blue)
+                } else {
+                    PinPadCard(savedPin, text, muted, blue, red)
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun CreatePinCard(text: Color, muted: Color, blue: Color) {
+        val prefs = getSharedPreferences("p", 0)
+        var p1 by remember { mutableStateOf("") }
+        var p2 by remember { mutableStateOf("") }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Text("Create parent PIN", color = text, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            Text("Use a 4–6 digit fallback PIN.", color = muted, fontSize = 14.sp)
+            Spacer(Modifier.height(14.dp))
+            OutlinedTextField(
+                value = p1,
+                onValueChange = { p1 = it.filter { ch -> ch.isDigit() }.take(6) },
+                label = { Text("New PIN") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                visualTransformation = PasswordVisualTransformation()
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = p2,
+                onValueChange = { p2 = it.filter { ch -> ch.isDigit() }.take(6) },
+                label = { Text("Repeat PIN") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                visualTransformation = PasswordVisualTransformation()
+            )
+            Spacer(Modifier.height(14.dp))
+            Button(onClick = {
+                when {
+                    p1.length !in 4..6 -> toast("Use 4 to 6 digits")
+                    p1 != p2 -> toast("PINs do not match")
+                    else -> {
+                        prefs.edit()
+                            .putString("appPin", p1)
+                            .putInt("pinFailCount", 0)
+                            .putLong("pinLockUntil", 0L)
+                            .apply()
+                        unlockParentApp("new PIN")
+                    }
+                }
+            }) { Text("Save PIN and unlock") }
+
+            if (canUseDeviceCredential()) {
+                Spacer(Modifier.height(8.dp))
+                PillButton("Use biometrics", blue, text) { launchDeviceCredential() }
+            }
+        }
+    }
+
+    @Composable
+    private fun PinPadCard(savedPin: String, text: Color, muted: Color, blue: Color, red: Color) {
+        var entered by remember { mutableStateOf("") }
+        val labels = listOf("1","2","3","4","5","6","7","8","9","⌫","0","Bio")
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Text("Enter PIN", color = text, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(10.dp))
+            Text("• ".repeat(entered.length), color = text, fontSize = 32.sp)
+            Spacer(Modifier.height(10.dp))
+
+            labels.chunked(3).forEach { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                    row.forEach { label ->
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(58.dp)
+                                .background(Color(0xFF1A222C), RoundedCornerShape(18.dp))
+                                .border(1.dp, Color(0x2235D061), RoundedCornerShape(18.dp))
+                                .clickable {
+                                    when (label) {
+                                        "⌫" -> if (entered.isNotEmpty()) entered = entered.dropLast(1)
+                                        "Bio" -> launchDeviceCredential()
+                                        else -> if (entered.length < 6) entered += label
+                                    }
+                                    if (entered.length >= 4 && entered == savedPin) {
+                                        unlockParentApp("PIN")
+                                    } else if (entered.length == 6 && entered != savedPin) {
+                                        registerWrongPinAttempt()
+                                    }
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(label, color = if (label == "Bio") blue else text, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
+            }
+            Text("Use Bio if the biometric prompt was closed.", color = muted, fontSize = 13.sp)
+        }
+    }
+
 
     @Composable
     private fun ParentDashboard() {
