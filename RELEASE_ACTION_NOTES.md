@@ -1,56 +1,35 @@
-# Parental-Link v3.2.6
+# Parental-Link v3.2.7
 
-Final rescue/diagnostic build before possible rewrite.
+Compile fix for v3.2.6.
 
-## Changed
+## Fixed
 
-- Dashboard no longer uses Compose.
-- `AppEntryActivity.showConnectedParent()` now routes to Java safe diagnostic dashboard.
-- Java safe dashboard includes:
-  - Test connection
-  - Devices
-  - Repair pairing
-  - Menu
-  - Show crash log
-  - Clear crash log
+GitHub Actions failed at Java compilation:
 
-## Crash log export
+- `variable v is already defined in method showChild()`
 
-Added internal crash logging:
+Cause:
 
-- `files/parental-link-crash-log.txt`
+- The `Reinitialise pairing` button was injected inside an existing child-screen lambda that already used `v` as the lambda parameter.
 
-Crash log can be opened/copied from:
+Fix:
 
-- Start screen
-- Java safe dashboard
+- Moved the `Reinitialise pairing` button creation outside the nested lambda.
+- Used a unique lambda parameter name: `reinitClick`.
+- Kept the crash-log exporter and Java safe dashboard from v3.2.6.
 
-## Child pairing recovery
+## Preserved from v3.2.6
 
-Added near the child QR/pairing screen:
-
-- `Reinitialise pairing`
-
-Use this if the first parent connection crashed and the child cannot be paired again.
-
-## Next steps after installing
-
-1. Open app.
-2. If it crashes, reopen.
-3. Tap `Show crash log` on the start screen.
-4. Copy crash log.
-5. Send it back.
-6. If crash log is empty, test pairing, master password, Java safe dashboard, Test connection, Devices.
-7. If any step crashes, reopen and send the crash log.
-
-## Rewrite preparation
-
-Added:
-
-- `ABILITY_INVENTORY_BEFORE_REWRITE.md`
+- Dashboard routes to Java safe diagnostic screen.
+- Start screen has `Show crash log`.
+- Java safe dashboard has `Show crash log`.
+- Internal crash log file:
+  - `files/parental-link-crash-log.txt`
+- Child QR screen has `Reinitialise pairing`.
+- Ability inventory before rewrite remains.
 
 ## Version
 
-- `versionCode 32006`
-- `versionName 3.2.6`
-- `APP_VERSION 3.2.6`
+- `versionCode 32007`
+- `versionName 3.2.7`
+- `APP_VERSION 3.2.7`

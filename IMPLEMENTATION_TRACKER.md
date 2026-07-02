@@ -124,3 +124,12 @@ Final rescue/diagnostic iteration before possible rewrite.
 - Crash log reachable from start screen and Java safe dashboard.
 - Child QR screen has `Reinitialise pairing` for failed/stale first connections.
 - Ability inventory added before rewrite.
+
+
+## v3.2.7
+
+Compile fix after v3.2.6.
+
+- Fixed Java lambda variable collision in `showChild()`.
+- `Reinitialise pairing` is now added after `ChildHomeScreen.render(...)`, outside the nested lambda list.
+- Crash-log exporter and Java safe dashboard remain unchanged.
