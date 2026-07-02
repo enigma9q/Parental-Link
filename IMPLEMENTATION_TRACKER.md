@@ -133,3 +133,25 @@ Compile fix after v3.2.6.
 - Fixed Java lambda variable collision in `showChild()`.
 - `Reinitialise pairing` is now added after `ChildHomeScreen.render(...)`, outside the nested lambda list.
 - Crash-log exporter and Java safe dashboard remain unchanged.
+
+
+## v3.2.8
+
+Pairing and removal synchronisation.
+
+- Child persists `childLinked=true` after successful PAIR.
+- Child screen treats `childLinked` as connected.
+- `remove_parental_link` no longer silently clears the child.
+- Removal becomes pending and requires child-side authorisation.
+- Parent no longer removes child locally immediately after sending removal.
+
+
+## v3.2.9
+
+Controlled dashboard test.
+
+- Safe Java dashboard remains default.
+- Added `Open Compose dashboard test`.
+- Compose dashboard can now be tested manually without creating a startup crash loop.
+- Removed/neutralised direct child-side stop-monitoring/remove wording.
+- Child removal remains through authorised pending-removal flow.

@@ -52,6 +52,18 @@ class AppEntryActivity : LegacyMainActivity() {
         showSafeDashboardJava()
     }
 
+    override fun openComposeDashboardTest() {
+        setContentView(
+            ComposeView(this).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                setContent { ParentDashboard() }
+            }
+        )
+    }
+
     @Composable
     private fun SafeParentDashboard() {
         val bg = Color(0xFF071014)

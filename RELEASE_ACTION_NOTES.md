@@ -1,35 +1,43 @@
-# Parental-Link v3.2.7
+# Parental-Link v3.2.9
 
-Compile fix for v3.2.6.
+Controlled Compose dashboard reintroduction and child-side removal cleanup.
 
-## Fixed
+## Dashboard crash testing
 
-GitHub Actions failed at Java compilation:
+The safe Java dashboard remains the default.
 
-- `variable v is already defined in method showChild()`
+Added button:
 
-Cause:
+- `Open Compose dashboard test`
 
-- The `Reinitialise pairing` button was injected inside an existing child-screen lambda that already used `v` as the lambda parameter.
+This manually opens the Compose dashboard. If it crashes, the app should reopen to the safe Java dashboard and the crash can be retrieved through:
 
-Fix:
+- Start screen → Show crash log
+- Safe Java dashboard → Show crash log
 
-- Moved the `Reinitialise pairing` button creation outside the nested lambda.
-- Used a unique lambda parameter name: `reinitClick`.
-- Kept the crash-log exporter and Java safe dashboard from v3.2.6.
+## Child app removal cleanup
 
-## Preserved from v3.2.6
+Removed/neutralised direct child-side “stop monitoring / remove Parental-Link” UI wording.
 
-- Dashboard routes to Java safe diagnostic screen.
-- Start screen has `Show crash log`.
-- Java safe dashboard has `Show crash log`.
-- Internal crash log file:
-  - `files/parental-link-crash-log.txt`
-- Child QR screen has `Reinitialise pairing`.
-- Ability inventory before rewrite remains.
+Child removal should now go through the authorised removal flow:
+
+1. Parent sends removal request.
+2. Child receives removal pending state.
+3. Child opens removal authorisation screen.
+4. Child authorises with master password / parent password if set.
+5. Or child chooses Keep monitoring.
+
+## Preserved
+
+- Safe Java dashboard
+- Crash log exporter
+- Start screen Show crash log
+- Child pairing state fixes
+- Child removal pending authorisation
+- Reinitialise pairing
 
 ## Version
 
-- `versionCode 32007`
-- `versionName 3.2.7`
-- `APP_VERSION 3.2.7`
+- `versionCode 32009`
+- `versionName 3.2.9`
+- `APP_VERSION 3.2.9`
