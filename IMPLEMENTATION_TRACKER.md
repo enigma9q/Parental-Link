@@ -1,6 +1,6 @@
 # Parental-Link implementation tracker
 
-Version: 3.2.2
+Version: 3.2.5
 
 ## Pairing change
 
@@ -64,3 +64,50 @@ A reset/repair must require one of:
 ### Implementation note
 
 This should be implemented after pairing/dashboard stability is confirmed.
+
+
+## v3.2.4
+
+Dashboard crash isolation:
+
+- Live dashboard replaced by safe dashboard shell.
+- No automatic monitor startup on dashboard entry.
+- No automatic current app/activity/status helper calls on first render.
+- Explicit diagnostic buttons added.
+
+Pairing flow:
+
+- After successful pairing, show master password setup.
+- Master password stored locally as `masterPassword` / `masterPasswordSet`.
+- This is a placeholder for future repair/reset recovery logic.
+
+## v3.2.5 backlog
+
+## HIGH: Child first-start pairing screen cleanup
+
+### Scenario
+
+- Child device starts before a parent has been saved or paired.
+- The current child screen may show request/buttons/activity/status frames.
+- These sections are irrelevant before a parent exists.
+- On smaller screens/tablets, the QR code can be pushed down and become unreachable because the child screen is not scrollable.
+
+### Required behaviour
+
+If the child has no saved parent connection:
+
+1. Show only the QR/pairing code section.
+2. Hide request panels.
+3. Hide action buttons.
+4. Hide activity/status frames.
+5. Make the screen scrollable.
+6. Keep the QR visible and easy to scan.
+7. Keep the pairing code visible as fallback.
+
+### Priority
+
+High.
+
+### Implementation note
+
+This should be implemented after v3.2.4 dashboard crash isolation is confirmed.

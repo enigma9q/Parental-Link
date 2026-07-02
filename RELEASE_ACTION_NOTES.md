@@ -1,22 +1,16 @@
-# Parental-Link v3.2.3
+# Parental-Link v3.2.5
 
 Backlog-only update.
 
-## Added backlog item
+## Added high-priority backlog item
 
-- Lost connection / possible reset recovery
+- Child first-start pairing screen cleanup
 
 ## Summary
 
-When one side loses connection but the IP still appears to host a Parental-Link server, the app should treat this as a possible reset/reinstall/data-clear/pairing mismatch, not simply offline.
+When the child starts before a parent is saved/paired, the screen should show only the QR/pairing section. Request panels, buttons, activity and status frames should be hidden because they are not relevant before pairing.
 
-Proposed recovery:
-
-- detect “server reachable but pairing/auth mismatch”
-- show a clear warning
-- offer retry, QR repair, or local reset after master password/PIN
-- never auto-reset silently
-- log the event
+The child pairing screen must also be scrollable so the QR code remains reachable on smaller screens/tablets.
 
 ## No functional code changes
 
@@ -24,6 +18,6 @@ This package only records the backlog item and bumps version metadata.
 
 ## Version
 
-- `versionCode 32003`
-- `versionName 3.2.3`
-- `APP_VERSION 3.2.3`
+- `versionCode 32005`
+- `versionName 3.2.5`
+- `APP_VERSION 3.2.5`

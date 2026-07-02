@@ -21,6 +21,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,18 +49,87 @@ class AppEntryActivity : LegacyMainActivity() {
     }
 
     override fun showConnectedParent(autoRefresh: Boolean) {
-        composePrepareParentDashboard()
+        // Recovery dashboard: do not start monitor or load live helper state automatically.
         setContentView(
             ComposeView(this).apply {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                setContent { ParentDashboard() }
+                setContent { SafeParentDashboard() }
             }
         )
-        if (autoRefresh) {
-            composeScheduleAutoRefresh()
+    }
+
+    @Composable
+    private fun SafeParentDashboard() {
+        val bg = Color(0xFF071014)
+        val card = Color(0xFF151B22)
+        val blue = Color(0xFF1683FF)
+        val muted = Color(0xFFAAB2BD)
+        val text = Color(0xFFF4F7FA)
+        var status by remember { mutableStateOf("Dashboard opened in safe mode. Live status is not loaded yet.") }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bg)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(16.dp)
+        ) {
+            Text("Parent dashboard", color = text, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            Text("Safe mode", color = blue, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(card, RoundedCornerShape(22.dp))
+                    .border(1.dp, Color(0x2235D061), RoundedCornerShape(22.dp))
+                    .padding(16.dp)
+            ) {
+                Column {
+                    Text("Connection saved", color = text, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(6.dp))
+                    Text(status, color = muted, fontSize = 14.sp)
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            Button(onClick = {
+                status = "Testing connection..."
+                cmdWithCallback("hello", "", { resp -> status = resp }, { err -> status = err })
+            }) { Text("Test connection") }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = {
+                status = "Loading live status..."
+                try {
+                    refreshParentDashboard()
+                    status = "Live status requested. If this crashes, refreshParentDashboard/monitor path is the cause."
+                } catch (e: Exception) {
+                    status = "Live status failed: ${e.message ?: "unknown error"}"
+                }
+            }) { Text("Load live status") }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = { showDevicesScreen() }) { Text("Devices") }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = { showParentConnection("", childIp) }) { Text("Repair pairing") }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = { showUserMenu() }) { Text("Menu") }
+
+            Spacer(Modifier.height(18.dp))
+            Text("Normal live dashboard is disabled in this build to isolate the crash.", color = muted, fontSize = 13.sp)
         }
     }
 
