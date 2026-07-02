@@ -1,22 +1,30 @@
-# Parental-Link v3.1.1
+# Parental-Link v3.1.2
 
-Compile fix after v3.1.0.
+Recovery build after v3.1.1 failed to open.
 
-## Fixed
+## Purpose
 
-GitHub Actions failed at Kotlin compile:
+v3.1.1 moved the parent lock/biometric screen to Kotlin/Compose. The app reportedly no longer opens.
 
-- `Unresolved reference: PillButton`
-- Location: `ComposeMainActivity.kt`
+This build bypasses the lock/biometric route on startup to isolate the crash.
 
-This version replaces that missing composable call with a standard Material `Button`.
+## Changed
 
-## No functional changes
+- If a parent connection exists, startup now opens the parent dashboard directly.
+- Automatic biometric prompt launch is disabled.
+- Existing PIN/biometric code remains present, but should not be entered automatically.
+- Compose dashboard remains active.
 
-No new screens, commands, services, protocol, storage or UI behaviour were changed beyond the compile fix.
+## Not changed
+
+- No command protocol changes.
+- No service changes.
+- No storage changes.
+- No child-side changes.
+- No new features.
 
 ## Version
 
-- `versionCode 31001`
-- `versionName 3.1.1`
-- `APP_VERSION 3.1.1`
+- `versionCode 31002`
+- `versionName 3.1.2`
+- `APP_VERSION 3.1.2`

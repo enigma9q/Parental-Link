@@ -112,7 +112,7 @@ open class ComposeMainActivity : LegacyMainActivity() {
         val muted = Color(0xFFAAB2BD)
         val text = Color(0xFFF4F7FA)
 
-        if (savedPin.isNotEmpty() && lockUntil <= now && canUseDeviceCredential()) {
+        if (false && savedPin.isNotEmpty() && lockUntil <= now && canUseDeviceCredential()) {
             LaunchedEffect(Unit) {
                 launchDeviceCredential()
             }

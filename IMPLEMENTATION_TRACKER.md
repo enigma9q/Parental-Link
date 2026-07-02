@@ -1,6 +1,6 @@
 # Parental-Link implementation tracker
 
-Version: 3.1.1
+Version: 3.1.2
 
 ## Current architecture
 
@@ -96,3 +96,21 @@ If the crash continues after v3.1.0, the next step is to remove the Java Activit
 
 - Fixed Kotlin compile error in parent lock screen by replacing missing `PillButton` reference with a Material `Button`.
 - No screen migration changes.
+
+
+## v3.1.2 recovery
+
+Reported issue after v3.1.1:
+
+- App does not open at all.
+
+Recovery action:
+
+- Parent app lock is bypassed on startup if a parent connection exists.
+- Automatic biometric prompt launch is disabled.
+- Parent dashboard still opens through Kotlin/Compose.
+- PIN/biometric lock code remains in the project but should not be used automatically in this build.
+
+Purpose:
+
+- Determine whether startup crash is caused by the biometric/lock flow or by the wider Compose dashboard.
