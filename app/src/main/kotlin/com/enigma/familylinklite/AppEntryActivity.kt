@@ -49,16 +49,7 @@ class AppEntryActivity : LegacyMainActivity() {
     }
 
     override fun showConnectedParent(autoRefresh: Boolean) {
-        // Recovery dashboard: do not start monitor or load live helper state automatically.
-        setContentView(
-            ComposeView(this).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                setContent { SafeParentDashboard() }
-            }
-        )
+        showSafeDashboardJava()
     }
 
     @Composable

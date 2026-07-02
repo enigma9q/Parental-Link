@@ -111,3 +111,16 @@ High.
 ### Implementation note
 
 This should be implemented after v3.2.4 dashboard crash isolation is confirmed.
+
+
+## v3.2.6
+
+Final rescue/diagnostic iteration before possible rewrite.
+
+- Compose dashboard disabled.
+- Java safe diagnostic dashboard added.
+- Crash logger installed through `Thread.setDefaultUncaughtExceptionHandler`.
+- Crash log stored as `files/parental-link-crash-log.txt`.
+- Crash log reachable from start screen and Java safe dashboard.
+- Child QR screen has `Reinitialise pairing` for failed/stale first connections.
+- Ability inventory added before rewrite.

@@ -1,23 +1,56 @@
-# Parental-Link v3.2.5
+# Parental-Link v3.2.6
 
-Backlog-only update.
+Final rescue/diagnostic build before possible rewrite.
 
-## Added high-priority backlog item
+## Changed
 
-- Child first-start pairing screen cleanup
+- Dashboard no longer uses Compose.
+- `AppEntryActivity.showConnectedParent()` now routes to Java safe diagnostic dashboard.
+- Java safe dashboard includes:
+  - Test connection
+  - Devices
+  - Repair pairing
+  - Menu
+  - Show crash log
+  - Clear crash log
 
-## Summary
+## Crash log export
 
-When the child starts before a parent is saved/paired, the screen should show only the QR/pairing section. Request panels, buttons, activity and status frames should be hidden because they are not relevant before pairing.
+Added internal crash logging:
 
-The child pairing screen must also be scrollable so the QR code remains reachable on smaller screens/tablets.
+- `files/parental-link-crash-log.txt`
 
-## No functional code changes
+Crash log can be opened/copied from:
 
-This package only records the backlog item and bumps version metadata.
+- Start screen
+- Java safe dashboard
+
+## Child pairing recovery
+
+Added near the child QR/pairing screen:
+
+- `Reinitialise pairing`
+
+Use this if the first parent connection crashed and the child cannot be paired again.
+
+## Next steps after installing
+
+1. Open app.
+2. If it crashes, reopen.
+3. Tap `Show crash log` on the start screen.
+4. Copy crash log.
+5. Send it back.
+6. If crash log is empty, test pairing, master password, Java safe dashboard, Test connection, Devices.
+7. If any step crashes, reopen and send the crash log.
+
+## Rewrite preparation
+
+Added:
+
+- `ABILITY_INVENTORY_BEFORE_REWRITE.md`
 
 ## Version
 
-- `versionCode 32005`
-- `versionName 3.2.5`
-- `APP_VERSION 3.2.5`
+- `versionCode 32006`
+- `versionName 3.2.6`
+- `APP_VERSION 3.2.6`
