@@ -1,34 +1,29 @@
-# Parental-Link v3.2.0
+# Parental-Link v3.2.1
 
-Structural recovery build.
+Structural duplicate-class avoidance build.
 
 ## Why
 
-v3.1.2 still did not open. The Java Activity bridge branch is stopped.
+v3.2.0 still failed in GitHub Actions because the repository retained stale `MainActivity` files. D8 reported:
+
+- `Type com.enigma.familylinklite.MainActivity is defined multiple times`
 
 ## Changed
 
-- Kotlin `MainActivity` is now the real manifest entry point.
-- Removed Java `MainActivity.java` stub.
-- Removed `ComposeMainActivity.kt`.
-- Parent startup bypasses biometric/PIN lock for now.
+- Added new Kotlin launcher:
+  - `AppEntryActivity.kt`
+- Manifest now launches:
+  - `.AppEntryActivity`
+- The app no longer relies on the class name `MainActivity`.
+- Startup still bypasses parent biometric/PIN lock.
 - Parent dashboard remains Compose.
-- Java services, protocol, storage, crypto and backend methods remain.
 
-## Expected entry structure
+## Intention
 
-Present:
-
-- `app/src/main/kotlin/com/enigma/familylinklite/MainActivity.kt`
-- `app/src/main/java/com/enigma/familylinklite/LegacyMainActivity.java`
-
-Absent:
-
-- `app/src/main/java/com/enigma/familylinklite/MainActivity.java`
-- `app/src/main/kotlin/com/enigma/familylinklite/ComposeMainActivity.kt`
+This build should avoid duplicate-class failures even if stale `MainActivity.java` or `MainActivity.kt` remains in the GitHub repository temporarily.
 
 ## Version
 
-- `versionCode 32000`
-- `versionName 3.2.0`
-- `APP_VERSION 3.2.0`
+- `versionCode 32001`
+- `versionName 3.2.1`
+- `APP_VERSION 3.2.1`

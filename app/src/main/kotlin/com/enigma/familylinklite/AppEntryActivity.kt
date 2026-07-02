@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Real Kotlin manifest entry point.
+ * Stable Kotlin launcher entry point.
  *
  * Services, protocol, storage and backend methods remain in Java.
- * Parent dashboard is Compose. LegacyMainActivity is used only as a backend/legacy holder during migration.
+ * Uses a unique class name to avoid stale MainActivity.java/MainActivity.kt collisions.
  */
-class MainActivity : LegacyMainActivity() {
+class AppEntryActivity : LegacyMainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }

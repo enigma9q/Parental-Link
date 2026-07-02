@@ -1,72 +1,43 @@
 # Parental-Link implementation tracker
 
-Version: 3.2.0
+Version: 3.2.1
 
-## Structural change
+## Structural decision
 
-`MainActivity` is now Kotlin:
+The launcher activity is now a new unique Kotlin class:
 
-- `app/src/main/kotlin/com/enigma/familylinklite/MainActivity.kt`
+- `app/src/main/kotlin/com/enigma/familylinklite/AppEntryActivity.kt`
 
-Removed:
+The Android manifest points to:
 
-- `app/src/main/java/com/enigma/familylinklite/MainActivity.java`
-- `app/src/main/kotlin/com/enigma/familylinklite/ComposeMainActivity.kt`
+- `.AppEntryActivity`
 
-## Current architecture
+## Why
 
-### Kotlin / Compose
+GitHub still compiled stale `MainActivity` files after v3.2.0:
 
-- `MainActivity.kt`
-  - Real Android manifest entry point.
-  - Parent dashboard surface.
-  - Parent dashboard action routing into existing Java backend methods.
+- stale Java `MainActivity.java`
+- Kotlin `MainActivity.kt`
+- ComposeMainActivity.kt
 
-### Java retained as backend/legacy holder
+This caused duplicate `com.enigma.familylinklite.MainActivity` at D8.
 
-- `LegacyMainActivity.java`
-  - Still extends `Activity`.
-  - Still contains old Java screens and backend methods.
-  - Kotlin `MainActivity` extends it temporarily to reuse tested protocol/storage/command code.
-  - No Java `MainActivity` stub remains.
+## v3.2.1 rule
 
-### Java retained services/backend
+Do not use the class name `MainActivity` as the launcher anymore.
 
-- `ChildServerService`
-- `ParentMonitorService`
-- `BlockAccessibilityService`
-- network/protocol
-- storage
-- crypto
-- updater
-- command/client logic
+Old files may still exist temporarily, but they are no longer the launcher entry point.
 
-## Startup lock status
+## Current retained code
 
-Parent biometric/PIN lock is bypassed in v3.2.0.
+- `LegacyMainActivity.java` remains as backend/legacy method holder.
+- `ComposeMainActivity.kt` may remain for compatibility with old Java `MainActivity.java`.
+- `AppEntryActivity.kt` is the real launcher.
+- Parent biometric/PIN lock is bypassed for now.
+- Parent dashboard remains Compose.
 
-Reason:
+## Next cleanup after build succeeds
 
-- v3.1.1 and v3.1.2 failed to open after changing the lock route.
-- This build focuses on making the app open with a Kotlin manifest entry point first.
-
-## Migration rule from here
-
-For each Java screen:
-
-1. Create Kotlin/Compose screen.
-2. Route to Kotlin screen.
-3. Keep backend calls into Java classes/methods.
-4. Remove or stop using the old Java screen.
-5. Record the migration here.
-
-## Next screens to migrate after app opens
-
-1. Start role-selection screen.
-2. Parent pairing screen.
-3. Devices screen.
-4. Interface/settings screen.
-5. More actions menu.
-6. Volume screen.
-7. Timeout dialog.
-8. Command history screen.
+1. Delete old Java `MainActivity.java`.
+2. Delete or merge old `ComposeMainActivity.kt`.
+3. Continue migrating Java screens one by one to Kotlin/Compose.
