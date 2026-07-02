@@ -1,34 +1,27 @@
-# Parental-Link v3.2.11
+# Parental-Link v3.2.12
 
-Parent monitor diagnostic hardening.
+Java dashboard restoration and Compose crash guard.
 
-## Audit result
+## Crash diagnosis
 
-- Safe Java dashboard remains the default parent entry.
-- Compose dashboard still opens only through `Open Compose dashboard test`.
-- Dashboard preparation does not auto-start `ParentMonitorService`.
-- `AppLog.add()` was still indirectly starting `ParentMonitorService` after every log write.
-- Parent notification action handling was still indirectly starting `ParentMonitorService`.
+The v3.2.11 crash log shows `ViewTreeLifecycleOwner not found` when opening the manual Compose dashboard test from the safe Java dashboard. The parent monitor crash is no longer the active failure; the remaining crash is the ComposeView lifecycle bridge.
 
 ## Fixed / changed
 
-- `ParentMonitorService` now posts a short normal diagnostic notification instead of entering foreground mode.
-- Parent monitor manifest entry no longer declares `foregroundServiceType="dataSync"`.
-- Log writes no longer auto-start the parent monitor.
-- Parent notification action callbacks no longer auto-start the parent monitor.
-- Manual troubleshooting restart still starts the short-lived diagnostic service.
+- Parent launch now opens the styled Java dashboard again instead of the diagnostic safe shell.
+- `Open Compose dashboard test` no longer attaches a ComposeView in this repair build.
+- Java dashboard action grid now uses the target eight-slot shape: enable/block, timeout, two custom action slots, media volume, ring device, chat, and more.
+- Version bumped to 3.2.12 for a distinct GitHub Action APK.
 
 ## Preserved
 
-- Safe Java dashboard remains default.
-- `Open Compose dashboard test` remains available.
-- Crash log exporter remains available from start screen and safe dashboard.
-- Child pairing/link state fixes remain.
-- Child removal authorisation flow remains.
-- Reinitialise pairing remains.
+- ParentMonitorService remains non-foreground and short-lived.
+- Crash log access remains available from the start screen.
+- Pairing, removal authorisation, and command handling are unchanged.
+- Kotlin/Compose files remain in the project for a later proper lifecycle migration.
 
 ## Version
 
-- `versionCode 32011`
-- `versionName 3.2.11`
-- `APP_VERSION 3.2.11`
+- `versionCode 32012`
+- `versionName 3.2.12`
+- `APP_VERSION 3.2.12`

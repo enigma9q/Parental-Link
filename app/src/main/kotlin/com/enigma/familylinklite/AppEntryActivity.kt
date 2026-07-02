@@ -49,19 +49,12 @@ class AppEntryActivity : LegacyMainActivity() {
     }
 
     override fun showConnectedParent(autoRefresh: Boolean) {
-        showSafeDashboardJava()
+        super.showConnectedParent(autoRefresh)
     }
 
     override fun openComposeDashboardTest() {
-        setContentView(
-            ComposeView(this).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                setContent { ParentDashboard() }
-            }
-        )
+        android.widget.Toast.makeText(this, "Compose dashboard test is disabled in this repair build", android.widget.Toast.LENGTH_SHORT).show()
+        showConnectedParent(false)
     }
 
     @Composable

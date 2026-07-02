@@ -177,3 +177,11 @@ Parent monitor diagnostic hardening.
 - ParentMonitorService no longer enters foreground mode or declares `dataSync`.
 - AppLog no longer auto-starts ParentMonitorService after every log write.
 - Parent notification action callbacks no longer auto-start ParentMonitorService.
+
+## v3.2.12
+
+Java dashboard restoration and Compose crash guard.
+
+- Parent launch returns to the styled Java dashboard instead of the diagnostic safe shell.
+- Compose dashboard test no longer attaches ComposeView until the activity lifecycle migration is fixed.
+- Parent action grid now matches the requested dashboard layout more closely with eight tiles and two custom slots.
