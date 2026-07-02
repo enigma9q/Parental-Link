@@ -1,6 +1,6 @@
 # Parental-Link implementation tracker
 
-Version: 3.2.5
+Version: 3.2.11
 
 ## Pairing change
 
@@ -166,3 +166,14 @@ Foreground-service timeout crash fix.
 - It calls `stopForeground(STOP_FOREGROUND_REMOVE)` and `stopSelf(startId)`.
 - Notification is no longer ongoing.
 - Diagnostic/dashboard paths avoid automatic parent monitor service starts where present.
+
+
+## v3.2.11
+
+Parent monitor diagnostic hardening.
+
+- Safe Java dashboard remains the default parent entry.
+- Compose dashboard remains manual through `Open Compose dashboard test`.
+- ParentMonitorService no longer enters foreground mode or declares `dataSync`.
+- AppLog no longer auto-starts ParentMonitorService after every log write.
+- Parent notification action callbacks no longer auto-start ParentMonitorService.

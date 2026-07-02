@@ -1,10 +1,8 @@
 package com.enigma.familylinklite.storage;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.enigma.familylinklite.services.ParentMonitorService;
 import com.enigma.familylinklite.core.AppConfig;
 
 import java.text.SimpleDateFormat;
@@ -43,7 +41,6 @@ public final class AppLog {
         if ("Security".equals(category) || "Error".equals(severity)) editor.putBoolean("securityAttention", true);
         editor.apply();
 
-        try { context.startService(new Intent(context, ParentMonitorService.class)); } catch (Exception ignored) {}
     }
 
     public static String lineSummary(String raw) {

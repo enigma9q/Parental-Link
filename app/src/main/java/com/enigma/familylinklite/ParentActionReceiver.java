@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.widget.Toast;
 import com.enigma.familylinklite.network.CommandClient;
 import com.enigma.familylinklite.storage.SavedConnection;
-import com.enigma.familylinklite.services.ParentMonitorService;
 import java.util.Base64;
 
 public class ParentActionReceiver extends BroadcastReceiver {
@@ -31,7 +30,6 @@ public class ParentActionReceiver extends BroadcastReceiver {
                                 .putBoolean("childUnlockRequestPending", false)
                                 .putString("lastCommandStatus", type + ": Executed")
                                 .apply();
-                        try { context.startService(new Intent(context, ParentMonitorService.class)); } catch (Exception ignored) {}
                         Toast.makeText(context, toast, Toast.LENGTH_SHORT).show();
                     },
                     err -> {

@@ -11,13 +11,13 @@ public class ParentMonitorService extends Service{
         String title="Parental-Link";
         String text=notificationSummary(p);
         try{
-            startForeground(3,notification(title,text));
+            getSystemService(NotificationManager.class).notify(3,notification(title,text));
         }catch(Exception ignored){}
         final int sid=startId;
         new Handler(Looper.getMainLooper()).postDelayed(()->{
-            try{stopForeground(STOP_FOREGROUND_REMOVE);}catch(Exception ignored){}
+            try{getSystemService(NotificationManager.class).cancel(3);}catch(Exception ignored){}
             try{stopSelf(sid);}catch(Exception ignored){}
-        },1500L);
+        },3000L);
         return START_NOT_STICKY;
     }
 
