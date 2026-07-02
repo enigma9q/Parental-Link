@@ -1,116 +1,72 @@
 # Parental-Link implementation tracker
 
-Version: 3.1.2
+Version: 3.2.0
+
+## Structural change
+
+`MainActivity` is now Kotlin:
+
+- `app/src/main/kotlin/com/enigma/familylinklite/MainActivity.kt`
+
+Removed:
+
+- `app/src/main/java/com/enigma/familylinklite/MainActivity.java`
+- `app/src/main/kotlin/com/enigma/familylinklite/ComposeMainActivity.kt`
 
 ## Current architecture
 
-### Kotlin / Compose screens
+### Kotlin / Compose
 
-- `ComposeMainActivity.kt`
-  - Parent app lock screen
-  - Parent PIN creation screen
-  - Parent PIN pad screen
-  - Biometric result handling
-  - Parent dashboard surface
-  - Parent request card
-  - Parent quick actions card
-  - Parent activity card
-  - Parent bottom navigation row
+- `MainActivity.kt`
+  - Real Android manifest entry point.
+  - Parent dashboard surface.
+  - Parent dashboard action routing into existing Java backend methods.
 
-### Java entry / compatibility
-
-- `MainActivity.java`
-  - Thin manifest-compatible stub only.
-  - No screen UI should be added here.
-  - It extends `ComposeMainActivity`.
-
-### Java legacy activity / backend bridge
+### Java retained as backend/legacy holder
 
 - `LegacyMainActivity.java`
-  - Still contains old Java screens.
-  - Still owns most command handlers, dialogs, pairing, menus, child setup, devices, volume, timeout, app list and history screens.
-  - Kotlin screens call Java methods for backend actions.
+  - Still extends `Activity`.
+  - Still contains old Java screens and backend methods.
+  - Kotlin `MainActivity` extends it temporarily to reuse tested protocol/storage/command code.
+  - No Java `MainActivity` stub remains.
 
-### Java services and backend code
-
-Kept in Java:
+### Java retained services/backend
 
 - `ChildServerService`
 - `ParentMonitorService`
 - `BlockAccessibilityService`
-- network/protocol classes
-- storage classes
-- crypto classes
-- update checker
-- UI helper classes until their screens are migrated
+- network/protocol
+- storage
+- crypto
+- updater
+- command/client logic
 
-## Migration status
+## Startup lock status
 
-### Migrated to Kotlin/Compose in v3.1.0
+Parent biometric/PIN lock is bypassed in v3.2.0.
 
-- Parent app lock
-- Parent PIN creation
-- Parent PIN pad
-- Biometric unlock result path
-- Parent dashboard
+Reason:
 
-### Still Java-screen based
+- v3.1.1 and v3.1.2 failed to open after changing the lock route.
+- This build focuses on making the app open with a Kotlin manifest entry point first.
 
-- Start role-selection screen
-- Parent pairing screen
-- Child home screen
-- Devices screen
-- Interface/settings screen
-- More actions menu
-- Volume screen
-- Timeout dialog
-- Command history screen
-- Blocked apps/list apps screens
-- Language/profile/settings sub-screens
-- Update/version screen if opened through legacy menu
+## Migration rule from here
 
-## Rule from v3.1.0 onward
+For each Java screen:
 
-For every migrated screen:
+1. Create Kotlin/Compose screen.
+2. Route to Kotlin screen.
+3. Keep backend calls into Java classes/methods.
+4. Remove or stop using the old Java screen.
+5. Record the migration here.
 
-1. Create the screen in Kotlin/Compose.
-2. Keep calls to existing Java backend methods where possible.
-3. Remove or stop routing to the old Java screen.
-4. Record the migration here.
-5. Do not add new features until crash source is isolated.
+## Next screens to migrate after app opens
 
-## Crash isolation note
-
-Reported crash: after biometrics.
-
-Mitigation in v3.1.0:
-
-- Biometric lock screen and result handling moved into `ComposeMainActivity.kt`.
-- Java lock UI is no longer used for the parent unlock surface.
-- Existing Java backend method `unlockParentApp(...)` is still used to reset lock state and open dashboard.
-
-If the crash continues after v3.1.0, the next step is to remove the Java Activity bridge and make Kotlin `MainActivity` the direct Android entry point.
-
-
-## v3.1.1
-
-- Fixed Kotlin compile error in parent lock screen by replacing missing `PillButton` reference with a Material `Button`.
-- No screen migration changes.
-
-
-## v3.1.2 recovery
-
-Reported issue after v3.1.1:
-
-- App does not open at all.
-
-Recovery action:
-
-- Parent app lock is bypassed on startup if a parent connection exists.
-- Automatic biometric prompt launch is disabled.
-- Parent dashboard still opens through Kotlin/Compose.
-- PIN/biometric lock code remains in the project but should not be used automatically in this build.
-
-Purpose:
-
-- Determine whether startup crash is caused by the biometric/lock flow or by the wider Compose dashboard.
+1. Start role-selection screen.
+2. Parent pairing screen.
+3. Devices screen.
+4. Interface/settings screen.
+5. More actions menu.
+6. Volume screen.
+7. Timeout dialog.
+8. Command history screen.

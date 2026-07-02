@@ -1,30 +1,34 @@
-# Parental-Link v3.1.2
+# Parental-Link v3.2.0
 
-Recovery build after v3.1.1 failed to open.
+Structural recovery build.
 
-## Purpose
+## Why
 
-v3.1.1 moved the parent lock/biometric screen to Kotlin/Compose. The app reportedly no longer opens.
-
-This build bypasses the lock/biometric route on startup to isolate the crash.
+v3.1.2 still did not open. The Java Activity bridge branch is stopped.
 
 ## Changed
 
-- If a parent connection exists, startup now opens the parent dashboard directly.
-- Automatic biometric prompt launch is disabled.
-- Existing PIN/biometric code remains present, but should not be entered automatically.
-- Compose dashboard remains active.
+- Kotlin `MainActivity` is now the real manifest entry point.
+- Removed Java `MainActivity.java` stub.
+- Removed `ComposeMainActivity.kt`.
+- Parent startup bypasses biometric/PIN lock for now.
+- Parent dashboard remains Compose.
+- Java services, protocol, storage, crypto and backend methods remain.
 
-## Not changed
+## Expected entry structure
 
-- No command protocol changes.
-- No service changes.
-- No storage changes.
-- No child-side changes.
-- No new features.
+Present:
+
+- `app/src/main/kotlin/com/enigma/familylinklite/MainActivity.kt`
+- `app/src/main/java/com/enigma/familylinklite/LegacyMainActivity.java`
+
+Absent:
+
+- `app/src/main/java/com/enigma/familylinklite/MainActivity.java`
+- `app/src/main/kotlin/com/enigma/familylinklite/ComposeMainActivity.kt`
 
 ## Version
 
-- `versionCode 31002`
-- `versionName 3.1.2`
-- `APP_VERSION 3.1.2`
+- `versionCode 32000`
+- `versionName 3.2.0`
+- `APP_VERSION 3.2.0`
