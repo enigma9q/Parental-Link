@@ -34,14 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
  * Stable Kotlin launcher entry point.
- *
- * Services, protocol, storage and backend methods remain in Java.
- * Uses a unique class name to avoid stale MainActivity.java/MainActivity.kt collisions.
  */
 class AppEntryActivity : LegacyMainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +53,12 @@ class AppEntryActivity : LegacyMainActivity() {
     override fun openComposeDashboardTest() {
         android.widget.Toast.makeText(this, "Compose dashboard test is disabled in this repair build", android.widget.Toast.LENGTH_SHORT).show()
         showConnectedParent(false)
+    }
+
+    @Preview(showBackground = true, backgroundColor = 0xFF071014)
+    @Composable
+    fun PreviewParentDashboard() {
+        SafeParentDashboard()
     }
 
     @Composable

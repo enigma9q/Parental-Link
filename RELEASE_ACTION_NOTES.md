@@ -1,18 +1,19 @@
-# Parental-Link v3.2.13
+# Parental-Link v3.2.14
 
-Java dashboard final polish pass.
+Manual build workflow and signing backlog.
 
 ## Fixed / changed
 
-- Request card now keeps a stable height and shows `No requests` when empty.
-- Multiple request types show a counter and can be swiped left/right inside the request card.
-- Side menus opened by swipe now have a framed, distinct menu background and card-like rows.
-- Interface settings now uses card-like rows with a direct Dark / Light / System theme selector.
-- Light mode colors were tuned for a rudimentary white dashboard/menu mode.
-- Parent action tiles keep the eight-slot dashboard shape from the mockup pass.
+- Added the Gradle wrapper so local builds can use the same Gradle version as GitHub Actions.
+- Added `.gitignore` rules for local Android Studio, Gradle, SDK, build, and signing files.
+- GitHub Actions no longer creates tags or GitHub Releases automatically on push.
+- GitHub Actions now runs manually and uploads the built APK as an artifact.
+- Current release signing is kept temporarily so APKs remain update-compatible on existing devices.
+- Added a backlog item to rotate the signing signature before final/public release.
+- Kept Android Studio's Compose preview helper for design inspection only.
 
 ## Version
 
-- `versionCode 32013`
-- `versionName 3.2.13`
-- `APP_VERSION 3.2.13`
+- `versionCode 32014`
+- `versionName 3.2.14`
+- `APP_VERSION 3.2.14`

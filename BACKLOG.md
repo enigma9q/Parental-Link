@@ -1,5 +1,16 @@
 # Backlog
 
+## Before finalisation: rotate signing signature
+
+The current release keystore/signing signature is kept temporarily so GitHub-built APKs remain installable as updates on existing devices.
+
+Before the app is treated as final/public:
+
+1. Create a new private release keystore outside the repository.
+2. Remove the old tracked keystore from Git history or move to a fresh repository if history rewrite is too risky.
+3. Move release signing to local/CI secrets only.
+4. Publish a clear migration plan, because Android treats a changed signing key as a different update trust chain.
+
 ## Lost connection / possible reset recovery
 
 ### Scenario

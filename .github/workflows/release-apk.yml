@@ -1,20 +1,17 @@
-name: Build, Tag and Release APK
+name: Build APK
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: parental-link-release-${{ github.ref }}
+  group: parental-link-build-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  build-tag-release:
+  build-apk:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,6 +30,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
 
       - name: Read app version
         id: version
@@ -54,18 +54,13 @@ jobs:
           TAG_NAME="v${VERSION_NAME}"
           APK_NAME="parental-link-v${VERSION_NAME}.apk"
 
-          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists. Bump versionName and versionCode before publishing again." >&2
-            exit 1
-          fi
-
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
           echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Build release APK
-        run: gradle clean assembleRelease --no-daemon --stacktrace
+        run: ./gradlew clean assembleRelease --no-daemon --stacktrace
 
       - name: Prepare APK asset
         shell: bash
@@ -74,28 +69,8 @@ jobs:
           test -f "$APK_SOURCE"
           cp "$APK_SOURCE" "${{ steps.version.outputs.apk_name }}"
 
-      - name: Create and push version tag
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.version.outputs.tag_name }}"
-          git push origin "${{ steps.version.outputs.tag_name }}"
-
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ steps.version.outputs.tag_name }}
-          name: Parental-Link ${{ steps.version.outputs.tag_name }}
-          body: |
-            Parental-Link Android APK.
-
-            Version name: ${{ steps.version.outputs.version_name }}
-            Version code: ${{ steps.version.outputs.version_code }}
-
-            Built, tagged, and published automatically after files were pushed to the repository.
-          files: ${{ steps.version.outputs.apk_name }}
-          fail_on_unmatched_files: true
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ steps.version.outputs.apk_name }}
+          path: ${{ steps.version.outputs.apk_name }}

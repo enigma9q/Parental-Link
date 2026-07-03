@@ -195,3 +195,15 @@ Java dashboard final polish pass.
 - Swipe menus use framed menu backgrounds and row cards.
 - Interface settings gained a direct dark/light/system selector and card rows.
 - Light mode colors tuned for a basic white interface.
+
+
+## v3.2.14
+
+Manual build workflow and signing backlog.
+
+- Added Gradle wrapper files for reproducible local builds.
+- Ignored Android Studio local files, build outputs, SDK paths, and signing files.
+- GitHub Actions no longer auto-tags or auto-publishes releases on push.
+- GitHub Actions now runs manually and uploads the APK artifact.
+- Current signing is kept temporarily for update-compatible APK downloads.
+- Added backlog note to rotate the signing signature before final/public release.
