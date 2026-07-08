@@ -20,7 +20,7 @@
         <activity android:name=".chat.ChildChatActivity" android:exported="false" />
         <activity android:name=".chat.QuickChatOverlayActivity" android:exported="false" android:theme="@android:style/Theme.Material.Light.NoActionBar" />
         <activity android:name=".audio.ChildAudioMessageActivity" android:exported="false" />
-        <activity android:name=".AppEntryActivity" android:exported="true">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

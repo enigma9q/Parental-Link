@@ -10,7 +10,7 @@ Manual build workflow and signing backlog.
 - GitHub Actions now runs manually and uploads the built APK as an artifact.
 - Current release signing is kept temporarily so APKs remain update-compatible on existing devices.
 - Added a backlog item to rotate the signing signature before final/public release.
-- Kept Android Studio's Compose preview helper for design inspection only.
+- Removed the Kotlin/Compose dashboard path; current prototype work is Java-native.
 
 ## Version
 

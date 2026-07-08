@@ -3,6 +3,7 @@ package com.enigma.familylinklite.services;
 import android.app.*;import android.content.*;import android.os.*;import com.enigma.familylinklite.MainActivity;import com.enigma.familylinklite.ui.StatusFormatter;
 
 public class ParentMonitorService extends Service{
+    public static final int NOTIFICATION_ID=3;
     static final String CHANNEL="parent_monitor";
     public IBinder onBind(Intent i){return null;}
     public void onCreate(){super.onCreate();createChannel();}
@@ -11,15 +12,16 @@ public class ParentMonitorService extends Service{
         String title="Parental-Link";
         String text=notificationSummary(p);
         try{
-            getSystemService(NotificationManager.class).notify(3,notification(title,text));
+            getSystemService(NotificationManager.class).notify(NOTIFICATION_ID,notification(title,text));
         }catch(Exception ignored){}
         final int sid=startId;
         new Handler(Looper.getMainLooper()).postDelayed(()->{
-            try{getSystemService(NotificationManager.class).cancel(3);}catch(Exception ignored){}
+            try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}
             try{stopSelf(sid);}catch(Exception ignored){}
         },3000L);
         return START_NOT_STICKY;
     }
+    public void onDestroy(){try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}super.onDestroy();}
 
     String notificationSummary(android.content.SharedPreferences p){
         String multi=p.getString("devicesNotificationSummary","").trim();

@@ -15,8 +15,9 @@ The app opened after clearing app data, but crashed when connecting to the child
 
 ## Launcher status
 
-- Manifest launcher remains `.AppEntryActivity`.
-- Parent biometric/PIN startup remains bypassed.
+- Manifest launcher is `.MainActivity`.
+- Kotlin/Compose dashboard path removed.
+- Parent opens the Java-native v0.9 dashboard prototype while the UI is rebuilt step by step.
 
 
 # Backlog
@@ -117,7 +118,7 @@ This should be implemented after v3.2.4 dashboard crash isolation is confirmed.
 
 Final rescue/diagnostic iteration before possible rewrite.
 
-- Compose dashboard disabled.
+- Alternate dashboard experiment disabled.
 - Java safe diagnostic dashboard added.
 - Crash logger installed through `Thread.setDefaultUncaughtExceptionHandler`.
 - Crash log stored as `files/parental-link-crash-log.txt`.
@@ -151,8 +152,8 @@ Pairing and removal synchronisation.
 Controlled dashboard test.
 
 - Safe Java dashboard remains default.
-- Added `Open Compose dashboard test`.
-- Compose dashboard can now be tested manually without creating a startup crash loop.
+- Added manual dashboard experiment entry.
+- Dashboard experiment can be tested manually without creating a startup crash loop.
 - Removed/neutralised direct child-side stop-monitoring/remove wording.
 - Child removal remains through authorised pending-removal flow.
 
@@ -173,17 +174,17 @@ Foreground-service timeout crash fix.
 Parent monitor diagnostic hardening.
 
 - Safe Java dashboard remains the default parent entry.
-- Compose dashboard remains manual through `Open Compose dashboard test`.
+- Alternate dashboard experiment remains manual through the diagnostic entry.
 - ParentMonitorService no longer enters foreground mode or declares `dataSync`.
 - AppLog no longer auto-starts ParentMonitorService after every log write.
 - Parent notification action callbacks no longer auto-start ParentMonitorService.
 
 ## v3.2.12
 
-Java dashboard restoration and Compose crash guard.
+Java dashboard restoration and dashboard crash guard.
 
 - Parent launch returns to the styled Java dashboard instead of the diagnostic safe shell.
-- Compose dashboard test no longer attaches ComposeView until the activity lifecycle migration is fixed.
+- Dashboard experiment no longer attaches the failed experimental view until the activity lifecycle issue is fixed.
 - Parent action grid now matches the requested dashboard layout more closely with eight tiles and two custom slots.
 
 ## v3.2.13

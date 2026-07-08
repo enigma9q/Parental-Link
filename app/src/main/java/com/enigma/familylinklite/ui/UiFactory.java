@@ -49,6 +49,14 @@ public final class UiFactory {
         return g;
     }
 
+    public static GradientDrawable actionShape(Activity a, int color, float radiusDp, int strokeColor) {
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(color);
+        g.setCornerRadius(dp(a, radiusDp));
+        g.setStroke(dp(a, 1), strokeColor);
+        return g;
+    }
+
     public static int dp(Activity a, float v) { return (int)(v * a.getResources().getDisplayMetrics().density + 0.5f); }
 
     public static TextView text(Activity activity, String value, int sp) {
@@ -72,19 +80,16 @@ public final class UiFactory {
         button.setAllCaps(false);
         button.setTextSize(14);
         button.setMinHeight(dp(activity, 48));
-        button.setBackground(rounded(activity, panel2(activity), 14));
-        button.setTextColor(isDark(activity) ? Color.rgb(230, 241, 255) : Color.rgb(25, 95, 170));
+        button.setBackground(actionShape(activity, isDark(activity) ? Color.rgb(18, 25, 33) : Color.WHITE, 11, border(activity)));
+        button.setTextColor(textColor(activity));
         button.setPadding(dp(activity, 10), dp(activity, 8), dp(activity, 10), dp(activity, 8));
         return button;
     }
 
     public static Button primaryButton(Activity activity, String value) {
         Button b = button(activity, value);
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(blue());
-        bg.setCornerRadius(dp(activity, 14));
-        b.setBackground(bg);
-        b.setTextColor(Color.WHITE);
+        b.setBackground(actionShape(activity, isDark(activity) ? Color.rgb(18, 25, 33) : Color.WHITE, 11, border(activity)));
+        b.setTextColor(textColor(activity));
         return b;
     }
 
@@ -106,16 +111,21 @@ public final class UiFactory {
     }
 
     public static LinearLayout attachRoot(Activity activity) {
+        LinearLayout shell = new LinearLayout(activity);
+        shell.setOrientation(LinearLayout.VERTICAL);
+        shell.setFitsSystemWindows(true);
+        shell.setBackgroundColor(bg(activity));
+        shell.setPadding(dp(activity, 14), dp(activity, 42), dp(activity, 14), dp(activity, 28));
         ScrollView scrollView = new ScrollView(activity);
         scrollView.setFillViewport(false);
-        scrollView.setFitsSystemWindows(true);
         scrollView.setBackgroundColor(bg(activity));
         LinearLayout root = new LinearLayout(activity);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(activity, 14), dp(activity, 42), dp(activity, 14), dp(activity, 28));
+        root.setPadding(0, dp(activity, 8), 0, 0);
         root.setBackgroundColor(bg(activity));
         scrollView.addView(root);
-        activity.setContentView(scrollView);
+        shell.addView(scrollView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+        activity.setContentView(shell);
         applyBars(activity);
         return root;
     }
@@ -145,59 +155,47 @@ public final class UiFactory {
     }
 
     public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick) {
-        return addTopBar(activity, root, prefs, userMenuClick, null);
+        return addTopBar(activity, root, prefs, userMenuClick, null, "Parental-Link");
     }
 
     public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick, HomeClick homeClick) {
+        return addTopBar(activity, root, prefs, userMenuClick, homeClick, "Parental-Link");
+    }
+
+    public static TextView addTopBar(Activity activity, LinearLayout root, SharedPreferences prefs, UserMenuClick userMenuClick, HomeClick homeClick, String title) {
+        LinearLayout host = root;
+        ViewGroup parent = (ViewGroup) root.getParent();
+        if (parent instanceof ScrollView && parent.getParent() instanceof LinearLayout) {
+            host = (LinearLayout) parent.getParent();
+        }
         LinearLayout bar = new LinearLayout(activity);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(android.view.Gravity.CENTER_VERTICAL);
         bar.setPadding(0, 0, 0, dp(activity, 8));
 
-        LinearLayout titleBox = new LinearLayout(activity);
-        titleBox.setOrientation(LinearLayout.HORIZONTAL);
-        titleBox.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        String screenTitle = title == null || title.trim().length() == 0 ? "Parental-Link" : title.trim();
+        Button user = button(activity, "\u2630" + (hasAttention(prefs) ? " \u2022" : ""));
+        user.setTextSize(22);
+        user.setMinWidth(dp(activity, 48));
+        user.setMinHeight(dp(activity, 44));
+        LinearLayout.LayoutParams userLp = new LinearLayout.LayoutParams(dp(activity, 52), dp(activity, 46));
+        userLp.setMargins(0, 0, dp(activity, 10), 0);
+        bar.addView(user, userLp);
 
-        TextView mark = new TextView(activity);
-        mark.setText("PL");
-        mark.setTextSize(15);
-        mark.setGravity(android.view.Gravity.CENTER);
-        mark.setTextColor(Color.WHITE);
-        mark.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-        mark.setIncludeFontPadding(false);
-        GradientDrawable markBg = new GradientDrawable();
-        markBg.setShape(GradientDrawable.RECTANGLE);
-        markBg.setCornerRadius(dp(activity, 9));
-        markBg.setColor(blue());
-        mark.setBackground(markBg);
-        LinearLayout.LayoutParams markLp = new LinearLayout.LayoutParams(dp(activity, 36), dp(activity, 36));
-        markLp.setMargins(0,0,dp(activity,10),0);
-        titleBox.addView(mark, markLp);
-        if (homeClick != null) {
-            mark.setOnClickListener(homeClick::onClick);
-            mark.setClickable(true);
-        }
-
-        TextView name = text(activity, "Parental-Link", 20);
+        TextView name = text(activity, screenTitle, 20);
         name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-        titleBox.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        name.setSingleLine(true);
+        bar.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
-        boolean attention = prefs.getBoolean("updateAvailable", false)
+        host.addView(bar, 0);
+        user.setOnClickListener(userMenuClick::onClick);
+        return name;
+    }
+
+    static boolean hasAttention(SharedPreferences prefs) {
+        return prefs.getBoolean("updateAvailable", false)
                 || prefs.getBoolean("securityAttention", false)
                 || prefs.getBoolean("versionAttention", false)
                 || prefs.getBoolean("childUnlockRequestPending", false);
-        Button user = button(activity, attention ? "Menu ●" : "Menu");
-        user.setTextSize(14);
-        user.setMinWidth(dp(activity, 86));
-        user.setMinHeight(dp(activity, 44));
-
-        bar.addView(titleBox, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(user, new LinearLayout.LayoutParams(dp(activity, 92), dp(activity, 46)));
-        root.addView(bar);
-        View divider = new View(activity);
-        divider.setBackgroundColor(border(activity));
-        root.addView(divider, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        user.setOnClickListener(userMenuClick::onClick);
-        return name;
     }
 }

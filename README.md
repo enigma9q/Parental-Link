@@ -15,10 +15,6 @@ See `RELEASE_ACTION_NOTES.md` for details.
 Focused parent child-card polish only. See RELEASE_ACTION_NOTES.md.
 
 
-## v2.9.24 migration note
+## v0.9 prototype note
 
-The app now starts from a Kotlin `MainActivity` while the existing Java implementation is kept as `LegacyMainActivity`. This is a bridge for the upcoming Kotlin/Compose UI migration. Core services and command handling remain Java.
-
-## v3.0.0 note
-
-This version starts the Kotlin/Compose UI migration. The parent dashboard is now a Compose surface; the existing Java legacy screens and services remain in place.
+The app is back to a Java-only Android UI path. The parent dashboard is being rebuilt step by step as a v0.9 Java-native prototype before any v1 release candidate work.
