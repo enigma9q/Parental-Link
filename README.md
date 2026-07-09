@@ -1,20 +1,33 @@
-# Parental-Link v2.9.19
+# Parental-Link
 
-Parental-Link is a local Wi-Fi parental control app. This package is a UI correction build.
+Parental-Link is a local Wi-Fi Android parental-control prototype. The app is currently in the `v0.9` rebuild phase: the Kotlin/Compose dashboard path has been removed, and the active UI is Java-native.
 
-## Current focus
+## Current Version
 
-- Parent and child app dark interface alignment.
-- Cleaner parent dashboard action cards.
-- Simplified child interface.
-- Correct `PL` mark.
+`0.9.1-prototype`
 
-See `RELEASE_ACTION_NOTES.md` for details.
+This is not a v1 release candidate yet. The goal of the current line is to rebuild the parent dashboard and supporting screens step by step while keeping the existing local-device control framework working.
 
-## v2.9.23
-Focused parent child-card polish only. See RELEASE_ACTION_NOTES.md.
+## Current Focus
 
+- Java-native parent dashboard polish.
+- Fixed-size requests area with request count and swipe-friendly request handling.
+- Dashboard action buttons and menus using one shared visual style.
+- App/device menus split by responsibility.
+- Parent-child local Wi-Fi command flow.
+- Child-side unlock, timeout, quick message, blocked app, and permission workflows.
+- Master/parent password entry using 4 to 8 numeric digits.
 
-## v0.9 prototype note
+## Release Flow
 
-The app is back to a Java-only Android UI path. The parent dashboard is being rebuilt step by step as a v0.9 Java-native prototype before any v1 release candidate work.
+Releases are produced from version tags such as:
+
+```text
+v0.9.1-prototype
+```
+
+When a version tag is pushed, GitHub Actions builds the release APK and publishes it to the matching GitHub release.
+
+## Notes Before v1
+
+See `BACKLOG.md` before treating this app as final. The signing key is still the temporary tracked key so current test devices can keep receiving installable updates; it must be rotated before a final/public release.
