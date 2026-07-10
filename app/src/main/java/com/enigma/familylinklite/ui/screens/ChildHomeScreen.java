@@ -20,6 +20,7 @@ public final class ChildHomeScreen {
         public TextView code;
         public TextView countdown;
         public ImageView qr;
+        public android.widget.ProgressBar expiry;
     }
 
     public static PairViews render(
@@ -46,8 +47,7 @@ public final class ChildHomeScreen {
         LinearLayout row = new LinearLayout(activity);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView avatar = UiFactory.text(activity, "👦", 34);
+        TextView avatar = UiFactory.text(activity, "Kid", 20);
         avatar.setGravity(Gravity.CENTER);
         android.graphics.drawable.GradientDrawable av = new android.graphics.drawable.GradientDrawable();
         av.setShape(android.graphics.drawable.GradientDrawable.OVAL);
@@ -60,39 +60,36 @@ public final class ChildHomeScreen {
         TextView title = UiFactory.text(activity, "Child tablet", 22);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         info.addView(title);
-        info.addView(UiFactory.mutedText(activity, connected ? "Parent linked: " + parentName : "Waiting for parent pairing", 14));
-        info.addView(UiFactory.mutedText(activity, permissionsOk ? "Permissions OK" : "Permissions need review", 14));
-        info.addView(UiFactory.text(activity, connected ? "Ready" : "Pairing needed", 15));
+        info.addView(UiFactory.mutedText(activity, connected ? "Connected to " + parentName : "Waiting for parent pairing", 14));
+        info.addView(UiFactory.mutedText(activity, connected ? "Ready" : "Pairing code and QR are active below.", 14));
+        if (!connected) {
+            info.addView(UiFactory.mutedText(activity, permissionsOk ? "Permissions OK" : "Permissions need review", 14));
+        }
+        info.addView(UiFactory.text(activity, connected ? "Connected" : "Pairing needed", 15));
         row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         statusCard.addView(row);
         root.addView(statusCard);
 
-        LinearLayout request = card(activity);
-        TextView requestTitle = UiFactory.text(activity, "Requests", 18);
-        requestTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        request.addView(requestTitle);
-        request.addView(UiFactory.mutedText(activity, "Requests will be visible here.", 14));
-        root.addView(request);
-
-        GridLayout quick = new GridLayout(activity);
-        quick.setColumnCount(4);
-        quick.setPadding(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 8));
-        String[] labels = new String[]{"❔\nAsk\nParent", chatUnread ? "💬\nQuick\nmessage •" : "💬\nQuick\nmessage", "＋\nAdd\naction", "＋\nAdd\naction", "🛡️\nCheck\npermissions", "🌐\nLanguage", "?\nHelp", "⋯\nMenu"};
-        View.OnClickListener[] listeners = new View.OnClickListener[]{askParent, callParent, callParent, callParent, unlockSettings, openLanguage, openHelp, openMenu};
-        for (int i = 0; i < labels.length; i++) {
-            Button b = UiFactory.button(activity, labels[i]);
-            b.setTextSize(12);
-            b.setGravity(Gravity.CENTER);
-            int w = (activity.getResources().getDisplayMetrics().widthPixels - UiFactory.dp(activity, 52)) / 4;
-            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
-            lp.width = w;
-            lp.height = UiFactory.dp(activity, 96);
-            lp.setMargins(UiFactory.dp(activity, 3), UiFactory.dp(activity, 5), UiFactory.dp(activity, 3), UiFactory.dp(activity, 5));
-            quick.addView(b, lp);
-            final View.OnClickListener listener = listeners[i];
-            b.setOnClickListener(listener);
+        if (connected) {
+            GridLayout quick = new GridLayout(activity);
+            quick.setColumnCount(4);
+            quick.setPadding(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 8));
+            String[] icons = new String[]{"?", chatUnread ? "!" : "M", "S", "="};
+            String[] labels = new String[]{"Ask parent", "Quick message", "Options", "Menu"};
+            View.OnClickListener[] listeners = new View.OnClickListener[]{askParent, callParent, unlockSettings, openMenu};
+            for (int i = 0; i < labels.length; i++) {
+                LinearLayout tile = actionTile(activity, icons[i], labels[i]);
+                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                lp.width = 0;
+                lp.height = UiFactory.dp(activity, 76);
+                lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                lp.setMargins(UiFactory.dp(activity, 3), UiFactory.dp(activity, 5), UiFactory.dp(activity, 3), UiFactory.dp(activity, 5));
+                quick.addView(tile, lp);
+                final View.OnClickListener listener = listeners[i];
+                tile.setOnClickListener(listener);
+            }
+            root.addView(quick);
         }
-        root.addView(quick);
 
         if (!connected || showPairingDetails) {
             LinearLayout pairing = card(activity);
@@ -102,9 +99,12 @@ public final class ChildHomeScreen {
             pairViews.code = UiFactory.text(activity, "--- ---", 34);
             pairViews.code.setGravity(Gravity.CENTER);
             pairing.addView(pairViews.code);
-            pairViews.countdown = UiFactory.mutedText(activity, "IP: -- • Code refreshes automatically", 14);
+            pairViews.countdown = UiFactory.mutedText(activity, "IP: -- - Code refreshes automatically", 14);
             pairViews.countdown.setGravity(Gravity.CENTER);
             pairing.addView(pairViews.countdown);
+            pairViews.expiry = new android.widget.ProgressBar(activity, null, android.R.attr.progressBarStyleHorizontal);
+            pairViews.expiry.setMax(300);
+            pairing.addView(pairViews.expiry, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 10)));
             pairViews.qr = new ImageView(activity);
             pairViews.qr.setAdjustViewBounds(true);
             LinearLayout.LayoutParams qlp = new LinearLayout.LayoutParams(UiFactory.dp(activity, 220), UiFactory.dp(activity, 220));
@@ -114,16 +114,29 @@ public final class ChildHomeScreen {
             root.addView(pairing);
         }
 
-        LinearLayout activityCard = card(activity);
-        TextView activityTitle = UiFactory.text(activity, "Activity & status", 18);
-        activityTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        activityCard.addView(activityTitle);
-        activityCard.addView(UiFactory.mutedText(activity, "Ask Parent — Ready", 14));
-        activityCard.addView(UiFactory.mutedText(activity, "Quick messages — Ready", 14));
-        activityCard.addView(UiFactory.mutedText(activity, permissionsOk ? "Permissions — OK" : "Permissions — Check needed", 14));
-        root.addView(activityCard);
-
         return pairViews;
+    }
+
+    private static LinearLayout actionTile(Activity activity, String icon, String label) {
+        LinearLayout tile = new LinearLayout(activity);
+        tile.setOrientation(LinearLayout.VERTICAL);
+        tile.setGravity(Gravity.CENTER);
+        tile.setPadding(UiFactory.dp(activity, 4), UiFactory.dp(activity, 5), UiFactory.dp(activity, 4), UiFactory.dp(activity, 5));
+        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+        bg.setColor(UiFactory.panel(activity));
+        bg.setCornerRadius(UiFactory.dp(activity, 8));
+        bg.setStroke(UiFactory.dp(activity, 1), UiFactory.border(activity));
+        tile.setBackground(bg);
+        TextView iconView = UiFactory.text(activity, icon, 20);
+        iconView.setTextColor(UiFactory.blue());
+        iconView.setGravity(Gravity.CENTER);
+        iconView.setTypeface(Typeface.DEFAULT_BOLD);
+        TextView labelView = UiFactory.text(activity, label, 12);
+        labelView.setGravity(Gravity.CENTER);
+        labelView.setMaxLines(2);
+        tile.addView(iconView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 24)));
+        tile.addView(labelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return tile;
     }
 
     private static LinearLayout card(Activity activity) {

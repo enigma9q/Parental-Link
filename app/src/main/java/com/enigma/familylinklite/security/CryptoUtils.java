@@ -13,11 +13,17 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public final class CryptoUtils {
+    public static final long PAIR_CODE_WINDOW_MS = 5L * 60L * 1000L;
     private CryptoUtils() {}
 
     public static String currentPairCode(byte[] key) {
+        return currentPairCode(key, 0);
+    }
+
+    public static String currentPairCode(byte[] key, long epochMs) {
         try {
-            long slice = System.currentTimeMillis() / 120000L;
+            long base = epochMs > 0 ? epochMs : 0;
+            long slice = Math.max(0, System.currentTimeMillis() - base) / PAIR_CODE_WINDOW_MS;
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(key, "HmacSHA256"));
             byte[] hash = mac.doFinal(String.valueOf(slice).getBytes(StandardCharsets.UTF_8));

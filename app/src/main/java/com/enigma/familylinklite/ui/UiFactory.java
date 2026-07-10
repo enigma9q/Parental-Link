@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -174,13 +175,26 @@ public final class UiFactory {
         bar.setPadding(0, 0, 0, dp(activity, 8));
 
         String screenTitle = title == null || title.trim().length() == 0 ? "Parental-Link" : title.trim();
-        Button user = button(activity, "\u2630" + (hasAttention(prefs) ? " \u2022" : ""));
+        FrameLayout userBox = new FrameLayout(activity);
+        Button user = button(activity, "\u2630");
         user.setTextSize(22);
         user.setMinWidth(dp(activity, 48));
         user.setMinHeight(dp(activity, 44));
         LinearLayout.LayoutParams userLp = new LinearLayout.LayoutParams(dp(activity, 52), dp(activity, 46));
         userLp.setMargins(0, 0, dp(activity, 10), 0);
-        bar.addView(user, userLp);
+        userBox.addView(user, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        if (hasAttention(prefs)) {
+            TextView dot = new TextView(activity);
+            dot.setText("");
+            GradientDrawable badge = new GradientDrawable();
+            badge.setShape(GradientDrawable.OVAL);
+            badge.setColor(blue());
+            dot.setBackground(badge);
+            FrameLayout.LayoutParams dlp = new FrameLayout.LayoutParams(dp(activity, 9), dp(activity, 9), android.view.Gravity.RIGHT | android.view.Gravity.TOP);
+            dlp.setMargins(0, dp(activity, 8), dp(activity, 8), 0);
+            userBox.addView(dot, dlp);
+        }
+        bar.addView(userBox, userLp);
 
         TextView name = text(activity, screenTitle, 20);
         name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);

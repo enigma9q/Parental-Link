@@ -15,7 +15,7 @@ public class DeviceProfile {
     }
 
     public String childIcon() {
-        return preferences.getString("childIcon", "📟");
+        return preferences.getString("childIcon", "Tablet");
     }
 
     public String childIp() {

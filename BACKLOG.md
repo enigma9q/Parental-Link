@@ -83,3 +83,18 @@ High.
 ### Implementation note
 
 This should be implemented after v3.2.4 dashboard crash isolation is confirmed.
+
+## UI and protocol follow-ups
+
+- HIGH: Troubleshooting status icon polish:
+  - Replace the thin/off-position status glyphs with clearer theme-matching icons.
+  - Align status icons consistently at the right edge of each row.
+  - Use a calmer visual treatment for OK, warning/needed, and unknown states.
+- Current app metadata: add app category tags such as game, app, system, browser, education.
+- App icons: design a protocol for the child app to send compressed app icons or icon hashes to parent devices.
+- Parent dashboard stale status: when the parent app opens and the child has not connected directly in the current session, device-card fields such as battery, Wi-Fi, current app, readiness, and other live values should be shown as unavailable (`---` / `???`) instead of using old cached values.
+- Parent-to-parent sync: confirm whether parent commands and child status are broadcast or mirrored to all paired parents.
+- Add parent workflow: make parent 2 setup QR-based from parent 1, then let parent 2 and each child perform their own handshake.
+- Devices screen: reorganize into clearer categories with list-style rows and dividers.
+- Parent permanent notification: add a setting and service behavior for an always-visible parent monitor notification.
+- Current app list refresh: verify newly installed apps after package changes and consider a child-side package-change receiver.

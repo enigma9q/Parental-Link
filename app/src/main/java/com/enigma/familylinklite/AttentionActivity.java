@@ -23,28 +23,42 @@ public class AttentionActivity extends Activity {
     boolean blocking = false;
     boolean closing = false;
     BroadcastReceiver closeReceiver;
+    TextView countdownView;
     Handler handler = new Handler(Looper.getMainLooper());
     Runnable refocusRunnable = new Runnable() {
         public void run() {
             if (blocking && !closing && activeChildLock()) bringLockScreenToFront();
         }
     };
+    Runnable countdownRunnable = new Runnable() {
+        public void run() {
+            updateCountdown();
+        }
+    };
 
     public void onCreate(Bundle b) {
         super.onCreate(b);
-        applyIntent(getIntent());
-        buildScreen();
         closeReceiver = new BroadcastReceiver() {
             public void onReceive(Context c, Intent i) {
                 showUnlockedAndReturnHome();
             }
         };
         IntentFilterCompat.register(this, closeReceiver, "com.enigma.familylinklite.CLOSE_ATTENTION");
+        if (getIntent() != null && getIntent().getBooleanExtra("unlocked", false)) {
+            showUnlockedAndReturnHome();
+            return;
+        }
+        applyIntent(getIntent());
+        buildScreen();
     }
 
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        if (intent != null && intent.getBooleanExtra("unlocked", false)) {
+            showUnlockedAndReturnHome();
+            return;
+        }
         applyIntent(intent);
         buildScreen();
     }
@@ -54,6 +68,8 @@ public class AttentionActivity extends Activity {
     }
 
     void buildScreen() {
+        handler.removeCallbacks(countdownRunnable);
+        countdownView = null;
         String title = getIntent().getStringExtra("title");
         String text = getIntent().getStringExtra("text");
         if (title == null) title = getString(R.string.app_name);
@@ -85,9 +101,10 @@ public class AttentionActivity extends Activity {
         msg.setTextSize(20);
         msg.setTextColor(Color.BLACK);
         msg.setGravity(Gravity.CENTER);
-        msg.setPadding(0, 24, 0, 24);
+        msg.setPadding(0, 18, 0, 18);
         root.addView(msg, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+        if (blocking && isTimeoutScreen(title)) addCountdown(root);
         if (blocking) addBlockingControls(root, title);
         else {
             Button ok = new Button(this);
@@ -97,6 +114,38 @@ public class AttentionActivity extends Activity {
             ok.setOnClickListener(v -> finish());
         }
         setContentView(root);
+    }
+
+    void addCountdown(LinearLayout root) {
+        countdownView = new TextView(this);
+        countdownView.setTextSize(48);
+        countdownView.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        countdownView.setTextColor(Color.rgb(20, 122, 255));
+        countdownView.setGravity(Gravity.CENTER);
+        countdownView.setPadding(0, 6, 0, 14);
+        root.addView(countdownView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        updateCountdown();
+    }
+
+    void updateCountdown() {
+        if (countdownView == null || closing) return;
+        long remaining = getSharedPreferences("rules", 0).getLong("lock_until", 0) - System.currentTimeMillis();
+        if (remaining <= 0) {
+            showUnlockedAndReturnHome();
+            return;
+        }
+        long totalSeconds = Math.max(1, (remaining + 999) / 1000);
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        if (hours > 0) countdownView.setText(String.format(java.util.Locale.US, "%d:%02d:%02d", hours, minutes, seconds));
+        else countdownView.setText(String.format(java.util.Locale.US, "%02d:%02d", minutes, seconds));
+        handler.postDelayed(countdownRunnable, 1000);
+    }
+
+    boolean isTimeoutScreen(String title) {
+        String s = title == null ? "" : title.toLowerCase(java.util.Locale.US);
+        return s.contains("timeout");
     }
 
     void addBlockingControls(LinearLayout root, String title) {
