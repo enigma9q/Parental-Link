@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -30,16 +31,24 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="family-link" android:host="pair" />
+                <data android:scheme="family-link" android:host="add-parent" />
             </intent-filter>
         </activity>
         <receiver android:name=".ParentActionReceiver" android:exported="false" />
         <receiver android:name=".ChildQuickActionReceiver" android:exported="false" />
+        <receiver android:name=".ChildServerWatchdogReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="com.enigma.familylinklite.RESTART_CHILD_SERVER" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".AdminReceiver" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
             <intent-filter><action android:name="android.app.action.DEVICE_ADMIN_ENABLED" /></intent-filter>
         </receiver>
             <service android:name=".services.ChildServerService" android:exported="false" android:foregroundServiceType="dataSync" />
-        <service android:name=".services.ParentMonitorService" android:exported="false" />
+        <service android:name=".services.ParentMonitorService" android:exported="false" android:foregroundServiceType="dataSync" />
         <service android:name=".services.BlockAccessibilityService" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
             <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>
             <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibility_service" />

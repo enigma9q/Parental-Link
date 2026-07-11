@@ -22,12 +22,14 @@ public class QuickChatOverlayActivity extends Activity {
     String mode;
     boolean blocking;
     int minutes;
+    String reason;
 
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
         emoji=extra("emoji","💬");
         text=extra("text","Message from parent");
         mode=extra("mode","full");
+        reason=extra("reason","Message from parent");
         blocking=getIntent()!=null&&getIntent().getBooleanExtra("blocking",false);
         minutes=getIntent()!=null?getIntent().getIntExtra("minutes",0):0;
         if("banner".equals(mode)) showBanner(); else showFullScreen();
@@ -72,6 +74,10 @@ public class QuickChatOverlayActivity extends Activity {
         root.addView(body,new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
 
         if(blocking){
+            TextView reasonView=UiFactory.text(this,reason,18);
+            reasonView.setGravity(Gravity.CENTER);
+            reasonView.setPadding(0,0,0,UiFactory.dp(this,8));
+            root.addView(reasonView);
             TextView hint=UiFactory.mutedText(this,"This attention message blocks the device until the parent removes the limitation.",14);
             hint.setGravity(Gravity.CENTER);
             root.addView(hint);

@@ -43,7 +43,7 @@ public final class PermissionReport {
 
     public String summary(String raw) {
         if (!hasData(raw)) return "Permissions: unknown";
-        return ok() ? "Permissions ✓" : "Permissions needed";
+        return ok() ? "Permissions OK" : "Permissions needed";
     }
 
     public String details(String raw) {

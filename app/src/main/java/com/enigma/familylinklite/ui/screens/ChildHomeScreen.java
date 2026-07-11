@@ -43,32 +43,31 @@ public final class ChildHomeScreen {
     ) {
         PairViews pairViews = new PairViews();
 
-        LinearLayout statusCard = card(activity);
-        LinearLayout row = new LinearLayout(activity);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        TextView avatar = UiFactory.text(activity, "Kid", 20);
-        avatar.setGravity(Gravity.CENTER);
-        android.graphics.drawable.GradientDrawable av = new android.graphics.drawable.GradientDrawable();
-        av.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        av.setColor(UiFactory.isDark(activity) ? Color.rgb(37, 54, 76) : Color.rgb(212, 230, 255));
-        avatar.setBackground(av);
-        row.addView(avatar, new LinearLayout.LayoutParams(UiFactory.dp(activity, 70), UiFactory.dp(activity, 70)));
+        if (connected) {
+            LinearLayout statusCard = card(activity);
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            TextView avatar = UiFactory.text(activity, "Kid", 20);
+            avatar.setGravity(Gravity.CENTER);
+            android.graphics.drawable.GradientDrawable av = new android.graphics.drawable.GradientDrawable();
+            av.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            av.setColor(UiFactory.isDark(activity) ? Color.rgb(37, 54, 76) : Color.rgb(212, 230, 255));
+            avatar.setBackground(av);
+            row.addView(avatar, new LinearLayout.LayoutParams(UiFactory.dp(activity, 70), UiFactory.dp(activity, 70)));
 
-        LinearLayout info = new LinearLayout(activity);
-        info.setOrientation(LinearLayout.VERTICAL);
-        TextView title = UiFactory.text(activity, "Child tablet", 22);
-        title.setTypeface(Typeface.DEFAULT_BOLD);
-        info.addView(title);
-        info.addView(UiFactory.mutedText(activity, connected ? "Connected to " + parentName : "Waiting for parent pairing", 14));
-        info.addView(UiFactory.mutedText(activity, connected ? "Ready" : "Pairing code and QR are active below.", 14));
-        if (!connected) {
-            info.addView(UiFactory.mutedText(activity, permissionsOk ? "Permissions OK" : "Permissions need review", 14));
+            LinearLayout info = new LinearLayout(activity);
+            info.setOrientation(LinearLayout.VERTICAL);
+            TextView title = UiFactory.text(activity, "Child tablet", 22);
+            title.setTypeface(Typeface.DEFAULT_BOLD);
+            info.addView(title);
+            info.addView(UiFactory.mutedText(activity, "Connected to " + parentName, 14));
+            info.addView(UiFactory.mutedText(activity, "Ready", 14));
+            info.addView(UiFactory.text(activity, "Connected", 15));
+            row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+            statusCard.addView(row);
+            root.addView(statusCard);
         }
-        info.addView(UiFactory.text(activity, connected ? "Connected" : "Pairing needed", 15));
-        row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        statusCard.addView(row);
-        root.addView(statusCard);
 
         if (connected) {
             GridLayout quick = new GridLayout(activity);
