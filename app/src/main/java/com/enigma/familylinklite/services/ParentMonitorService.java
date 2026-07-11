@@ -63,7 +63,9 @@ public class ParentMonitorService extends Service{
     Notification notification(String title,String text,boolean ongoing){
         Intent i=new Intent(this,MainActivity.class);
         PendingIntent pi=PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_IMMUTABLE);
-        return new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(R.drawable.ic_notification_link).setContentIntent(pi).setOngoing(ongoing).build();
+        Notification n=new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(R.drawable.ic_notification_link).setContentIntent(pi).setOngoing(ongoing).setOnlyAlertOnce(true).build();
+        if(ongoing)n.flags|=Notification.FLAG_ONGOING_EVENT|Notification.FLAG_NO_CLEAR;
+        return n;
     }
     String firstLine(String text){if(text==null)return "";int n=text.indexOf('\n');return n>=0?text.substring(0,n):text;}
     String cleanAppName(String raw){

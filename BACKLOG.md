@@ -13,6 +13,7 @@ Before the app is treated as final/public:
 
 ## UI and protocol follow-ups
 
+- High: redesign the chat screen as a proper message list. Each message row should show three compact action icons on the right, and tapping the message should open the action choices we decide for that message.
 - App icons: design a protocol for the child app to send compressed app icons or icon hashes to parent devices.
 - Parent-to-parent sync: implement real multi-parent command/status mirroring after the child storage model supports multiple parent keys.
 

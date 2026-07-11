@@ -40,7 +40,9 @@ public final class ChildHomeScreen {
             View.OnClickListener askParent,
             View.OnClickListener openLanguage,
             View.OnClickListener openHelp,
-            View.OnClickListener openMenu
+            View.OnClickListener openMenu,
+            String childIcon,
+            View.OnClickListener changeIcon
     ) {
         PairViews pairViews = new PairViews();
 
@@ -49,13 +51,23 @@ public final class ChildHomeScreen {
             LinearLayout row = new LinearLayout(activity);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            TextView avatar = UiFactory.text(activity, "Kid", 20);
+            android.widget.FrameLayout avatarWrap = new android.widget.FrameLayout(activity);
+            TextView avatar = UiFactory.text(activity, childIcon == null || childIcon.length() == 0 ? "\uD83D\uDCFA" : childIcon, 30);
             avatar.setGravity(Gravity.CENTER);
             android.graphics.drawable.GradientDrawable av = new android.graphics.drawable.GradientDrawable();
             av.setShape(android.graphics.drawable.GradientDrawable.OVAL);
             av.setColor(UiFactory.isDark(activity) ? Color.rgb(37, 54, 76) : Color.rgb(212, 230, 255));
             avatar.setBackground(av);
-            row.addView(avatar, new LinearLayout.LayoutParams(UiFactory.dp(activity, 70), UiFactory.dp(activity, 70)));
+            avatarWrap.addView(avatar, new android.widget.FrameLayout.LayoutParams(UiFactory.dp(activity, 70), UiFactory.dp(activity, 70), Gravity.CENTER));
+            TextView edit = UiFactory.text(activity, "\u270E", 16);
+            edit.setGravity(Gravity.CENTER);
+            edit.setTextColor(Color.WHITE);
+            edit.setTypeface(Typeface.DEFAULT_BOLD);
+            edit.setBackground(UiFactory.rounded(activity, UiFactory.blue(), 14));
+            android.widget.FrameLayout.LayoutParams editLp = new android.widget.FrameLayout.LayoutParams(UiFactory.dp(activity, 28), UiFactory.dp(activity, 28), Gravity.RIGHT | Gravity.BOTTOM);
+            avatarWrap.addView(edit, editLp);
+            avatarWrap.setOnClickListener(changeIcon);
+            row.addView(avatarWrap, new LinearLayout.LayoutParams(UiFactory.dp(activity, 76), UiFactory.dp(activity, 76)));
 
             LinearLayout info = new LinearLayout(activity);
             info.setOrientation(LinearLayout.VERTICAL);
