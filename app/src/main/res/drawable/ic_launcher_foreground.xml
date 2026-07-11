@@ -3,7 +3,12 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Simple launcher-safe PL monogram. Adaptive background supplies the blue. -->
-    <path android:fillColor="#FFFFFF" android:pathData="M25,28h24c11,0 19,8 19,19s-8,19 -19,19H38v18H25zM38,40v14h10c4,0 7,-3 7,-7s-3,-7 -7,-7z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M69,28h13v44h24v12H69z" />
+    <!-- Parent and child linked together. Adaptive background supplies the full blue tile. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,31a12,12 0,1 0,0.1 0M73,26a15,15 0,1 0,0.1 0M22,81c0,-13 9,-23 21,-23c6,0 11,2 15,6c-5,5 -8,12 -8,20v3H22zM54,87v-4c0,-16 12,-28 29,-28s29,12 29,28v4z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M47,54c4,-5 10,-8 17,-9l2,10c-5,1 -9,3 -12,7zM43,63c3,0 6,1 9,3l-5,9c-2,-1 -4,-2 -6,-2z"
+        android:fillAlpha="0.88" />
 </vector>

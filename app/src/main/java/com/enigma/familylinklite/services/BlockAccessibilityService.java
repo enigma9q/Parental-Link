@@ -7,12 +7,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.*;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 import com.enigma.familylinklite.AttentionActivity;
+import com.enigma.familylinklite.R;
 import java.text.*;import java.util.*;
 
 public class BlockAccessibilityService extends AccessibilityService{
     Handler h=new Handler(Looper.getMainLooper());
-    Runnable timeoutCheck=new Runnable(){public void run(){enforceTimeout();h.postDelayed(this,900);}};
+    Runnable timeoutCheck=new Runnable(){public void run(){enforceTimeout();enforceVisibleBlockedApps();h.postDelayed(this,700);}};
     public void onServiceConnected(){super.onServiceConnected();h.post(timeoutCheck);notifySmall("Accessibility blocking active","Parental-Link can now cover blocked apps.");}
     public void onDestroy(){h.removeCallbacksAndMessages(null);super.onDestroy();}
     public void onInterrupt(){}
@@ -27,8 +30,34 @@ public class BlockAccessibilityService extends AccessibilityService{
         if(lockUntil>now){showLimitationScreen(lockUntil);return;}
         long until=getSharedPreferences("rules",0).getLong("blocked_until_"+pkg,0);
         if(until>now){showBlockedAppScreen(pkg,until);}
+        enforceVisibleBlockedApps();
     }
     void enforceTimeout(){long until=getSharedPreferences("rules",0).getLong("lock_until",0);if(until>System.currentTimeMillis())showLimitationScreen(until);}
+    void enforceVisibleBlockedApps(){
+        long now=System.currentTimeMillis();
+        if(getSharedPreferences("rules",0).getLong("lock_until",0)>now)return;
+        if(Build.VERSION.SDK_INT<21)return;
+        try{
+            List<AccessibilityWindowInfo> windows=getWindows();
+            if(windows==null)return;
+            for(AccessibilityWindowInfo w:windows){
+                if(w==null)continue;
+                AccessibilityNodeInfo root=w.getRoot();
+                String pkg=packageFromNode(root);
+                if(pkg.length()>0&&!pkg.equals(getPackageName())){
+                    long until=getSharedPreferences("rules",0).getLong("blocked_until_"+pkg,0);
+                    if(until>now){showBlockedAppScreen(pkg,until);return;}
+                }
+            }
+        }catch(Exception ignored){}
+    }
+    String packageFromNode(AccessibilityNodeInfo node){
+        try{
+            if(node==null)return "";
+            CharSequence pkg=node.getPackageName();
+            return pkg==null?"":pkg.toString();
+        }catch(Exception e){return "";}
+    }
     void showLimitationScreen(long until){
         String mode=getSharedPreferences("rules",0).getString("lock_mode","");
         String title="Device disabled";
@@ -57,5 +86,5 @@ public class BlockAccessibilityService extends AccessibilityService{
     }
     String appLabel(String pkg){try{PackageManager pm=getPackageManager();ApplicationInfo ai=pm.getApplicationInfo(pkg,0);return pm.getApplicationLabel(ai).toString();}catch(Exception e){return pkg;}}
     String time(long t){return new SimpleDateFormat("HH:mm",Locale.US).format(new Date(t));}
-    void notifySmall(String title,String text){try{NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);String ch="child_server";if(Build.VERSION.SDK_INT>=26)nm.createNotificationChannel(new NotificationChannel(ch,"Parental-Link Child Server",NotificationManager.IMPORTANCE_LOW));nm.notify(3,new Notification.Builder(this,ch).setContentTitle(title).setContentText(text).setSmallIcon(android.R.drawable.ic_dialog_info).build());}catch(Exception ignored){}}
+    void notifySmall(String title,String text){try{NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);String ch="child_server";if(Build.VERSION.SDK_INT>=26)nm.createNotificationChannel(new NotificationChannel(ch,"Parental-Link Child Server",NotificationManager.IMPORTANCE_LOW));nm.notify(3,new Notification.Builder(this,ch).setContentTitle(title).setContentText(text).setSmallIcon(R.drawable.ic_notification_link).build());}catch(Exception ignored){}}
 }

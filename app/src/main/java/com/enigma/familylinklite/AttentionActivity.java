@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -277,6 +278,7 @@ public class AttentionActivity extends Activity {
             return;
         }
         keepFrontVisuals();
+        if (blockingInSplitScreen()) scheduleRefocus(80);
     }
 
     protected void onPause() {
@@ -293,6 +295,16 @@ public class AttentionActivity extends Activity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) keepFrontVisuals();
         else scheduleRefocus(250);
+        if (blockingInSplitScreen()) scheduleRefocus(80);
+    }
+
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        if (isInMultiWindowMode && blocking && !closing && activeChildLock()) scheduleRefocus(60);
+    }
+
+    boolean blockingInSplitScreen() {
+        return Build.VERSION.SDK_INT >= 24 && blocking && !closing && activeChildLock() && isInMultiWindowMode();
     }
 
     public void onBackPressed() {

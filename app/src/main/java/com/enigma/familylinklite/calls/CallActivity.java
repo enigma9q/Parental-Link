@@ -91,12 +91,12 @@ public class CallActivity extends Activity {
         end.setAction(ACTION_END_CALL);
         PendingIntent endPi=PendingIntent.getBroadcast(this,201,end,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder b=Build.VERSION.SDK_INT>=26?new Notification.Builder(this,"call"):new Notification.Builder(this);
-        b.setSmallIcon(R.mipmap.ic_launcher)
+        b.setSmallIcon(R.drawable.ic_notification_link)
          .setContentTitle(active?"☎ Call with "+peer:"☎ Calling "+peer)
          .setContentText(active?"Tap to return to call":"Call screen open")
          .setContentIntent(openPi)
          .setOngoing(true)
-         .addAction(R.mipmap.ic_launcher,"End call",endPi);
+         .addAction(R.drawable.ic_notification_link,"End call",endPi);
         nm.notify(NOTIF_ID,b.build());
     }
 

@@ -1,6 +1,8 @@
 package com.enigma.familylinklite.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public final class BlockedAppEntry {
     public final String label;
@@ -29,6 +31,7 @@ public final class BlockedAppEntry {
             if (p.length >= 2) out.add(new BlockedAppEntry(p[0], p[1], p.length >= 3 ? p[2] : ""));
             else out.add(new BlockedAppEntry(l, l, ""));
         }
+        sortByName(out);
         return out;
     }
 
@@ -43,6 +46,15 @@ public final class BlockedAppEntry {
             String[] p = l.split("\\|", 2);
             if (p.length >= 2) out.add(new BlockedAppEntry(p[0], p[1], ""));
         }
+        sortByName(out);
         return out;
+    }
+
+    private static void sortByName(ArrayList<BlockedAppEntry> apps) {
+        Collections.sort(apps, new Comparator<BlockedAppEntry>() {
+            public int compare(BlockedAppEntry a, BlockedAppEntry b) {
+                return a.displayName().compareToIgnoreCase(b.displayName());
+            }
+        });
     }
 }
