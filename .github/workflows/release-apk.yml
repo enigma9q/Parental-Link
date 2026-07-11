@@ -89,8 +89,8 @@ jobs:
             Java-native v0.9 prototype release.
 
             Highlights:
-            - Kotlin/Compose dashboard path removed.
-            - Parent dashboard and menus moved to the current Java-native style.
-            - Requests, activity, logs, settings, profiles, unlock codes, and troubleshooting screens polished.
-            - Master/parent password flow supports 4 to 8 numeric digits.
-            - Exit parent monitor now stops the monitor service, clears its notification, and closes the app.
+            - Child and parent device icons polished.
+            - App and notification icons updated to the linked parent/child mark.
+            - Split-screen blocking safeguards added for child restrictions.
+            - Blocked app list simplified and app list handling improved.
+            - Parent Devices screen and child dashboard action tiles cleaned up.
