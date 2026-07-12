@@ -18,7 +18,7 @@
     <string name="menu_parent_control">Parent Control</string>
     <string name="menu_child_device">Child device</string>
     <string name="menu_devices">Devices</string>
-    <string name="menu_blocked_apps">Blocked apps</string>
+    <string name="menu_blocked_apps">Manage apps</string>
     <string name="menu_command_history">Command history</string>
     <string name="menu_logs">Logs</string>
     <string name="menu_troubleshooting">Troubleshooting</string>
@@ -49,8 +49,8 @@
     <string name="open_logs">Open logs</string>
     <string name="restart_service">Restart service</string>
     <string name="no_blocked_apps">No blocked apps</string>
-    <string name="apps_blocked_on_this_device">Apps blocked on this device</string>
-    <string name="blocked_apps_help">Blocked apps are listed below. Choose an app from the child device list to block it.</string>
+    <string name="apps_blocked_on_this_device">Managed apps on this device</string>
+    <string name="blocked_apps_help">Choose an app to set free use, a daily limit, a temporary timeout, or a block.</string>
     <string name="add_app">Add app</string>
     <string name="current_version">Current version</string>
     <string name="protocol">Protocol</string>
@@ -69,7 +69,7 @@
     <string name="dashboard_current_app">Current app</string>
     <string name="dashboard_today">Today</string>
     <string name="dashboard_volume">Volume</string>
-    <string name="dashboard_blocked_apps">Blocked apps</string>
+    <string name="dashboard_blocked_apps">Manage apps</string>
     <string name="command_history_title">Command history</string>
     <string name="command_history_help">Commands are tracked as Sending, Delivered, Executed or Failed.</string>
     <string name="retry_last_failed">Retry last failed</string>

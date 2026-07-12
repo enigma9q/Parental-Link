@@ -3,7 +3,7 @@ plugins { id 'com.android.application' }
 android { namespace 'com.enigma.familylinklite'; compileSdk 35
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     signingConfigs { shared { storeFile file('familylink-lite.keystore'); storePassword 'familylinklite'; keyAlias 'familylinklite'; keyPassword 'familylinklite' } }
-    defaultConfig { applicationId 'com.enigma.familylinklite'; minSdk 26; targetSdk 35; versionCode 32021; versionName '0.9.6-prototype' }
+    defaultConfig { applicationId 'com.enigma.familylinklite'; minSdk 26; targetSdk 35; versionCode 32022; versionName '1.0.0-rc1' }
     buildTypes { debug { signingConfig signingConfigs.shared }; release { signingConfig signingConfigs.shared } }
 }
 

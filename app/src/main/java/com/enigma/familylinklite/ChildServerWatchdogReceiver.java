@@ -27,6 +27,10 @@ public class ChildServerWatchdogReceiver extends BroadcastReceiver {
 
     public static void startChildServer(Context context, String reason) {
         try {
+            context.getSharedPreferences("p", 0).edit()
+                .putLong("childServerLastRestartRequest", System.currentTimeMillis())
+                .putString("childServerLastRestartReason", reason == null ? "watchdog" : reason)
+                .apply();
             Intent service = new Intent(context, ChildServerService.class);
             service.putExtra("restart_reason", reason == null ? "watchdog" : reason);
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(service);
@@ -43,7 +47,7 @@ public class ChildServerWatchdogReceiver extends BroadcastReceiver {
             PendingIntent pi = PendingIntent.getBroadcast(context, 44, i, flags);
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             if (am == null) return;
-            long at = System.currentTimeMillis() + 60_000L;
+            long at = System.currentTimeMillis() + 2L * 60_000L;
             if (Build.VERSION.SDK_INT >= 23) am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
             else am.set(AlarmManager.RTC_WAKEUP, at, pi);
         } catch (Exception ignored) {}

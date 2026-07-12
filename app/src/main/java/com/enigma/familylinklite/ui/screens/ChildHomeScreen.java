@@ -75,8 +75,10 @@ public final class ChildHomeScreen {
             title.setTypeface(Typeface.DEFAULT_BOLD);
             info.addView(title);
             info.addView(UiFactory.mutedText(activity, "Connected to " + parentName, 14));
-            info.addView(UiFactory.mutedText(activity, "Ready", 14));
-            info.addView(UiFactory.text(activity, "Connected", 15));
+            TextView status = UiFactory.text(activity, permissionsOk ? "Ready" : "Permissions need review", 15);
+            status.setTextColor(permissionsOk ? UiFactory.green() : UiFactory.red());
+            status.setTypeface(Typeface.DEFAULT_BOLD);
+            info.addView(status);
             row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
             statusCard.addView(row);
             root.addView(statusCard);
@@ -93,7 +95,7 @@ public final class ChildHomeScreen {
                 LinearLayout tile = actionTile(activity, icons[i], labels[i]);
                 GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
                 lp.width = 0;
-                lp.height = UiFactory.dp(activity, 76);
+                lp.height = UiFactory.dp(activity, 82);
                 lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
                 lp.setMargins(UiFactory.dp(activity, 3), UiFactory.dp(activity, 5), UiFactory.dp(activity, 3), UiFactory.dp(activity, 5));
                 quick.addView(tile, lp);
@@ -119,7 +121,8 @@ public final class ChildHomeScreen {
             pairing.addView(pairViews.expiry, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 10)));
             pairViews.qr = new ImageView(activity);
             pairViews.qr.setAdjustViewBounds(true);
-            LinearLayout.LayoutParams qlp = new LinearLayout.LayoutParams(UiFactory.dp(activity, 220), UiFactory.dp(activity, 220));
+            int qrSize = isWide(activity) ? 170 : 220;
+            LinearLayout.LayoutParams qlp = new LinearLayout.LayoutParams(UiFactory.dp(activity, qrSize), UiFactory.dp(activity, qrSize));
             qlp.gravity = Gravity.CENTER_HORIZONTAL;
             pairing.addView(pairViews.qr, qlp);
             pairing.addView(UiFactory.mutedText(activity, connected ? "Pairing details are normally hidden after setup." : "Show this code or QR to a parent phone.", 14));
@@ -133,7 +136,7 @@ public final class ChildHomeScreen {
         LinearLayout tile = new LinearLayout(activity);
         tile.setOrientation(LinearLayout.VERTICAL);
         tile.setGravity(Gravity.CENTER);
-        tile.setPadding(UiFactory.dp(activity, 4), UiFactory.dp(activity, 5), UiFactory.dp(activity, 4), UiFactory.dp(activity, 5));
+        tile.setPadding(UiFactory.dp(activity, 3), UiFactory.dp(activity, 6), UiFactory.dp(activity, 3), UiFactory.dp(activity, 6));
         android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
         bg.setColor(UiFactory.panel(activity));
         bg.setCornerRadius(UiFactory.dp(activity, 8));
@@ -148,7 +151,7 @@ public final class ChildHomeScreen {
         TextView labelView = UiFactory.text(activity, label, 12);
         labelView.setGravity(Gravity.CENTER);
         labelView.setMaxLines(2);
-        tile.addView(iconView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 36)));
+        tile.addView(iconView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 42)));
         tile.addView(labelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return tile;
     }
@@ -158,9 +161,14 @@ public final class ChildHomeScreen {
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(UiFactory.dp(activity, 12), UiFactory.dp(activity, 12), UiFactory.dp(activity, 12), UiFactory.dp(activity, 12));
         card.setBackground(UiFactory.rounded(activity, UiFactory.panel(activity), 18));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(isWide(activity) ? UiFactory.dp(activity, 420) : ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 4));
+        lp.gravity = Gravity.CENTER_HORIZONTAL;
         card.setLayoutParams(lp);
         return card;
+    }
+
+    private static boolean isWide(Activity activity) {
+        return activity.getResources().getConfiguration().screenWidthDp >= 600;
     }
 }

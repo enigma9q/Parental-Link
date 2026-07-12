@@ -23,7 +23,7 @@ public final class UiFactory {
 
     public static boolean isDark(Activity a) {
         SharedPreferences p = a.getSharedPreferences("p", 0);
-        String mode = p.getString("themeMode", "dark");
+        String mode = p.getString("themeMode", "light");
         if ("dark".equals(mode)) return true;
         if ("light".equals(mode)) return false;
         int night = a.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;

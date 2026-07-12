@@ -14,10 +14,18 @@ Before the app is treated as final/public:
 ## UI and protocol follow-ups
 
 - High: redesign the chat screen as a proper message list. Each message row should show three compact action icons on the right, and tapping the message should open the action choices we decide for that message.
+- High validation: verify child active-time accounting on real devices after the active-usage gate. The child now reports foreground app time only while the device is actively usable, but it still needs overnight, lock-screen, timeout/block, launcher/home, and Samsung-tablet checks before v1.
+- High: rename Blocked apps to Manage apps and replace the split blocked/full lists with one app policy list:
+  - app icon and app name
+  - app state icon: free use, daily app limit, profile allowed, or blocked
+  - temporary timeout icon
+  - block/unblock icon
+  - per-app maximum daily time, separate from temporary timeout and hard block
+  - remove blocked apps from the old standalone list model
 - App icons: design a protocol for the child app to send compressed app icons or icon hashes to parent devices.
 - Parent-to-parent sync: implement real multi-parent command/status mirroring after the child storage model supports multiple parent keys.
 
-## Done in v0.9.3-prototype: usage-time accuracy
+## Done in v0.9.3: usage-time accuracy foundation
 
 The dashboard/device card now reports daily active app time from the child usage response instead of an older unlock/session timestamp.
 
@@ -77,6 +85,7 @@ Launcher UI:
    - Choose default drawer style.
    - Hide apps by category.
    - Optionally show daily usage next to app names.
+7. Later: add profile-related launcher screens for homework, bedtime, travel, free time, and focus desktop modes.
 
 Suggestions to evaluate:
 
