@@ -27,6 +27,8 @@ public final class PermissionReport {
         values.put("usage", false);
         values.put("accessibility", false);
         values.put("notifications", false);
+        values.put("camera", false);
+        values.put("microphone", false);
         values.put("overlay", false);
         values.put("dndPolicy", false);
         values.put("battery", false);
@@ -72,6 +74,8 @@ public final class PermissionReport {
         if ("usage".equals(key)) return "Usage Access";
         if ("accessibility".equals(key)) return "Accessibility";
         if ("notifications".equals(key)) return "Notifications";
+        if ("camera".equals(key)) return "Camera";
+        if ("microphone".equals(key)) return "Microphone";
         if ("overlay".equals(key)) return "Overlay";
         if ("dndPolicy".equals(key)) return "DND Access";
         if ("battery".equals(key)) return "Battery unrestricted";

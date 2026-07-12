@@ -49,4 +49,17 @@ public final class ChatStore {
         }
         return sb.toString().trim();
     }
+
+    public static String[] recentLines(Context c, int maxLines) {
+        String h = history(c);
+        if (h.length() == 0) return new String[0];
+        String[] lines = h.split("\\n");
+        int count = Math.max(1, maxLines);
+        int start = Math.max(0, lines.length - count);
+        java.util.ArrayList<String> out = new java.util.ArrayList<>();
+        for (int i = start; i < lines.length; i++) {
+            if (lines[i].trim().length() > 0) out.add(lines[i].trim());
+        }
+        return out.toArray(new String[0]);
+    }
 }

@@ -1,6 +1,6 @@
 package com.enigma.familylinklite.services;
 
-import android.app.*;import android.content.*;import android.os.*;import com.enigma.familylinklite.MainActivity;import com.enigma.familylinklite.R;import com.enigma.familylinklite.ui.StatusFormatter;
+import android.app.*;import android.content.*;import android.graphics.BitmapFactory;import android.os.*;import com.enigma.familylinklite.MainActivity;import com.enigma.familylinklite.R;import com.enigma.familylinklite.ui.StatusFormatter;
 
 public class ParentMonitorService extends Service{
     public static final int NOTIFICATION_ID=3;
@@ -9,7 +9,7 @@ public class ParentMonitorService extends Service{
     public void onCreate(){super.onCreate();createChannel();}
     public int onStartCommand(Intent intent,int flags,int startId){
         android.content.SharedPreferences p=getSharedPreferences("p",0);
-        String title="Parental-Link";
+        String title=notificationTitle(p);
         String text=notificationSummary(p);
         boolean permanent=p.getBoolean("parentPermanentNotification",false);
         try{
@@ -27,9 +27,19 @@ public class ParentMonitorService extends Service{
     }
     public void onDestroy(){try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}super.onDestroy();}
 
+    String notificationTitle(android.content.SharedPreferences p){
+        String childIp=p.getString("childIp","").trim();
+        String parentKey=p.getString("parentKey","").trim();
+        boolean removed=p.getBoolean("childDeviceRemoved",false);
+        if(childIp.length()==0||parentKey.length()==0||removed)return "P-L Devices: none paired";
+        long last=p.getLong("lastStatusMs",0);
+        long age=last>0?System.currentTimeMillis()-last:Long.MAX_VALUE;
+        boolean connected=last>0&&age<=10L*60L*1000L;
+        return connected?"P-L Devices: 1 connected":"P-L Devices: 1 unavailable";
+    }
+
     String notificationSummary(android.content.SharedPreferences p){
         String multi=p.getString("devicesNotificationSummary","").trim();
-        if(multi.length()>0)return multi;
         String childIp=p.getString("childIp","").trim();
         String parentKey=p.getString("parentKey","").trim();
         boolean removed=p.getBoolean("childDeviceRemoved",false);
@@ -39,31 +49,28 @@ public class ParentMonitorService extends Service{
         if(p.getBoolean("childUnlockRequestPending",false)){return "Unlock request - "+p.getString("childUnlockRequestReason","limitation");}
         if(childIp.length()==0||parentKey.length()==0||removed){
             if(removalPending)return "Child removal pending";
-            String latest=p.getString("latestLog","");
-            if(latest!=null&&latest.toLowerCase(java.util.Locale.US).contains("removed"))return "No paired child device";
             return "No paired child device";
         }
         String nick=p.getString("childNickname","Child tablet");
+        String icon=normalDeviceIcon(p.getString("childIcon","\uD83D\uDCFA"));
         long last=p.getLong("lastStatusMs",0);
-        long mins=p.getLong("todayMinutes",-1);
-        String app=cleanAppName(p.getString("lastCurrentApp",""));
-        String status="unknown"; if(mismatch){status="repair";}else if(last>0){long age=System.currentTimeMillis()-last;status=age>10L*60L*1000L?"stale":"online";}
-        String today=mins>=0?String.format(java.util.Locale.US,"%02d:%02d",mins/60,mins%60):"--:--";
-        String strip=StatusFormatter.dashboardStrip(p,p.getInt("parentVolume",50));
-        if(last==0){String latest=p.getString("latestLog","");return latest.length()>0?latest:"No child status yet";}
-        long age=System.currentTimeMillis()-last;
-        if(age>10L*60L*1000L){
-            return "1 device - "+nick+" "+status+" - Last sync "+ageText(age)+" ago\n"+strip;
+        long age=last>0?System.currentTimeMillis()-last:Long.MAX_VALUE;
+        boolean connected=last>0&&age<=10L*60L*1000L;
+        if(multi.length()>0&&connected)return multi;
+        if(!connected){
+            return icon+" "+nick+" - Not connected";
         }
-        return "1 device - "+nick+" "+status+" - "+today+" today"+(app.length()>0?" - "+app:"")+"\n"+strip;
+        return icon+" "+nick+" - Online - "+powerStatus(p)+" - "+dndStatus(p);
     }
 
-    String ageText(long ms){long m=ms/60000L;if(m<1)return "just now";if(m<60)return m+"m";long h=m/60;return h+"h "+(m%60)+"m";}
+    String powerStatus(android.content.SharedPreferences p){int battery=p.getInt("remoteBattery",-1);boolean charging=p.getBoolean("remoteCharging",false);return (charging?"\uD83D\uDD0C":"\uD83D\uDD0B")+(battery>=0?battery+"%":"--");}
+    String dndStatus(android.content.SharedPreferences p){return "\uD83D\uDD15"+StatusFormatter.conciseDndStatus(p);}
+    String normalDeviceIcon(String icon){String v=icon==null?"":icon.trim();if(v.length()==0)return "\uD83D\uDCFA";if(v.codePointCount(0,v.length())<=2&&!v.matches("[A-Za-z ]+"))return v;String low=v.toLowerCase(java.util.Locale.US);if(low.contains("phone"))return "\uD83D\uDCF2";if(low.contains("tablet"))return "\uD83D\uDCFA";if(low.contains("baby"))return "\uD83D\uDC76";if(low.contains("girl"))return "\uD83D\uDC67";if(low.contains("boy"))return "\uD83D\uDC66";if(low.contains("teen")||low.contains("kid")||low.contains("child"))return "\uD83E\uDDD2";if(low.contains("rainbow"))return "\uD83C\uDF08";if(low.contains("star"))return "\u2B50";if(low.contains("dog"))return "\uD83D\uDC36";if(low.contains("cat"))return "\uD83D\uDC31";if(low.contains("unicorn"))return "\uD83E\uDD84";return "\uD83D\uDCFA";}
 
     Notification notification(String title,String text,boolean ongoing){
         Intent i=new Intent(this,MainActivity.class);
         PendingIntent pi=PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_IMMUTABLE);
-        Notification n=new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(R.drawable.ic_notification_link).setContentIntent(pi).setOngoing(ongoing).setOnlyAlertOnce(true).build();
+        Notification n=new Notification.Builder(this,CHANNEL).setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(R.drawable.ic_notification_link).setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher)).setContentIntent(pi).setOngoing(ongoing).setOnlyAlertOnce(true).build();
         if(ongoing)n.flags|=Notification.FLAG_ONGOING_EVENT|Notification.FLAG_NO_CLEAR;
         return n;
     }

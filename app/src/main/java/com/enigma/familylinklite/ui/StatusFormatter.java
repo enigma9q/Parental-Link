@@ -15,29 +15,29 @@ public final class StatusFormatter {
     }
 
     public static String wifiBars(int bars) {
-        if (bars <= 0) return "▱▱▱";
-        if (bars == 1) return "▰▱▱";
-        if (bars == 2) return "▰▰▱";
-        return "▰▰▰";
+        if (bars <= 0) return "\u25B1\u25B1\u25B1";
+        if (bars == 1) return "\u25B0\u25B1\u25B1";
+        if (bars == 2) return "\u25B0\u25B0\u25B1";
+        return "\u25B0\u25B0\u25B0";
     }
 
     public static String activeSyncText(SharedPreferences prefs, boolean live) {
         long last = prefs.getLong("lastStatusMs", 0);
         if (live) return "Live connection";
-        if (last <= 0) return "Last sync: never • Next check: --";
+        if (last <= 0) return "Last sync: never \u2022 Next check: --";
         long age = Math.max(0, (System.currentTimeMillis() - last) / 60000);
         long next = Math.max(0, 5 - age);
         String ago = age == 0 ? "just now" : age + " min ago";
-        return "Last sync: " + ago + " • Next check: " + next + " min";
+        return "Last sync: " + ago + " \u2022 Next check: " + next + " min";
     }
 
     public static String dashboardStrip(SharedPreferences prefs, int parentVolume) {
         int battery = prefs.getInt("remoteBattery", -1);
         boolean charging = prefs.getBoolean("remoteCharging", false);
-        String batt = (charging ? "🔌" : "🔋") + (battery >= 0 ? battery + "%" : "--");
-        String wifi = "🛜" + wifiBars(prefs.getInt("remoteWifiBars", -1));
-        String vol = "🔊" + parentVolume + "%";
-        String dnd = "🔕" + conciseDndStatus(prefs);
+        String batt = (charging ? "\uD83D\uDD0C" : "\uD83D\uDD0B") + (battery >= 0 ? battery + "%" : "--");
+        String wifi = "\uD83D\uDCF6" + wifiBars(prefs.getInt("remoteWifiBars", -1));
+        String vol = "\uD83D\uDD0A" + parentVolume + "%";
+        String dnd = "\uD83D\uDD15" + conciseDndStatus(prefs);
         return batt + "      " + wifi + "      " + vol + "      " + dnd;
     }
 

@@ -89,8 +89,8 @@ jobs:
             Java-native v0.9 prototype release.
 
             Highlights:
-            - Child and parent device icons polished.
-            - App and notification icons updated to the linked parent/child mark.
-            - Split-screen blocking safeguards added for child restrictions.
-            - Blocked app list simplified and app list handling improved.
-            - Parent Devices screen and child dashboard action tiles cleaned up.
+            - Rudimentary child launcher added with filtered child app list.
+            - Child screen gets a Test launcher button.
+            - Chat preset UI and quick replies cleaned up.
+            - Parent and child persistent notifications refined.
+            - Lock and timeout return flow improved.

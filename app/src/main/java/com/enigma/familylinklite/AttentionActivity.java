@@ -218,7 +218,7 @@ public class AttentionActivity extends Activity {
         root.addView(title, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         TextView msg = new TextView(this);
-        msg.setText("Returning to home screen");
+        msg.setText("Returning to previous app");
         msg.setTextSize(18);
         msg.setTextColor(Color.DKGRAY);
         msg.setGravity(Gravity.CENTER);
@@ -226,7 +226,24 @@ public class AttentionActivity extends Activity {
         root.addView(msg, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         setContentView(root);
-        handler.postDelayed(() -> returnToLauncher(), 1000);
+        handler.postDelayed(() -> returnToPreviousAppOrLauncher(), 1000);
+    }
+
+    void returnToPreviousAppOrLauncher() {
+        String pkg = getSharedPreferences("rules", 0).getString("return_to_package", "");
+        getSharedPreferences("rules", 0).edit().remove("return_to_package").apply();
+        if (pkg != null && pkg.length() > 0 && !pkg.equals(getPackageName())) {
+            try {
+                Intent launch = getPackageManager().getLaunchIntentForPackage(pkg);
+                if (launch != null) {
+                    launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(launch);
+                    finish();
+                    return;
+                }
+            } catch (Exception ignored) {}
+        }
+        returnToLauncher();
     }
 
     void returnToLauncher() {

@@ -87,7 +87,7 @@ public final class ChildHomeScreen {
             quick.setColumnCount(4);
             quick.setPadding(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 8));
             String[] icons = new String[]{"ic_proto_bell", chatUnread ? "ic_proto_bell" : "ic_proto_chat", "ic_menu_settings", "ic_proto_more"};
-            String[] labels = new String[]{"Ask parent", "Quick message", "Options", "Menu"};
+            String[] labels = new String[]{"Ask parent", "Chat", "Options", "Menu"};
             View.OnClickListener[] listeners = new View.OnClickListener[]{askParent, callParent, unlockSettings, openMenu};
             for (int i = 0; i < labels.length; i++) {
                 LinearLayout tile = actionTile(activity, icons[i], labels[i]);

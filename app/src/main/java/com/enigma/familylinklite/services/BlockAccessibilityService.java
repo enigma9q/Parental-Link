@@ -5,6 +5,7 @@ import android.app.*;
 import android.content.*;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.*;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -27,7 +28,7 @@ public class BlockAccessibilityService extends AccessibilityService{
         if(pkg.equals(getPackageName()))return;
         long now=System.currentTimeMillis();
         long lockUntil=getSharedPreferences("rules",0).getLong("lock_until",0);
-        if(lockUntil>now){showLimitationScreen(lockUntil);return;}
+        if(lockUntil>now){rememberReturnPackage(pkg);showLimitationScreen(lockUntil);return;}
         long until=getSharedPreferences("rules",0).getLong("blocked_until_"+pkg,0);
         if(until>now){showBlockedAppScreen(pkg,until);}
         enforceVisibleBlockedApps();
@@ -84,6 +85,8 @@ public class BlockAccessibilityService extends AccessibilityService{
             notifySmall(title,"Parental-Link screen active until "+time(until));
         }catch(Exception ignored){}
     }
+    void rememberReturnPackage(String pkg){try{if(pkg==null||pkg.length()==0||pkg.equals(getPackageName())||launcherPackages().contains(pkg))return;getSharedPreferences("rules",0).edit().putString("return_to_package",pkg).apply();}catch(Exception ignored){}}
+    Set<String> launcherPackages(){Set<String> out=new HashSet<>();try{Intent home=new Intent(Intent.ACTION_MAIN);home.addCategory(Intent.CATEGORY_HOME);List<ResolveInfo> infos=getPackageManager().queryIntentActivities(home,0);if(infos!=null){for(ResolveInfo ri:infos){if(ri!=null&&ri.activityInfo!=null&&ri.activityInfo.packageName!=null)out.add(ri.activityInfo.packageName);}}}catch(Exception ignored){}return out;}
     String appLabel(String pkg){try{PackageManager pm=getPackageManager();ApplicationInfo ai=pm.getApplicationInfo(pkg,0);return pm.getApplicationLabel(ai).toString();}catch(Exception e){return pkg;}}
     String time(long t){return new SimpleDateFormat("HH:mm",Locale.US).format(new Date(t));}
     void notifySmall(String title,String text){try{NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);String ch="child_server";if(Build.VERSION.SDK_INT>=26)nm.createNotificationChannel(new NotificationChannel(ch,"Parental-Link Child Server",NotificationManager.IMPORTANCE_LOW));nm.notify(3,new Notification.Builder(this,ch).setContentTitle(title).setContentText(text).setSmallIcon(R.drawable.ic_notification_link).build());}catch(Exception ignored){}}

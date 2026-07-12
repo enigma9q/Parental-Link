@@ -21,15 +21,17 @@
         <activity android:name=".chat.ChildChatActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".chat.QuickChatOverlayActivity" android:exported="false" android:theme="@android:style/Theme.Material.Light.NoActionBar" />
         <activity android:name=".audio.ChildAudioMessageActivity" android:exported="false" android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ChildLauncherActivity" android:exported="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
