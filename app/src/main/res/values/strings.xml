@@ -92,7 +92,7 @@
     <string name="battery_unrestricted">Battery unrestricted</string>
     <string name="check_again">Check again</string>
     <string name="remove_all_limitations_travel">Remove all limitations / Travel mode</string>
-    <string name="remove_parental_control">Remove parental control</string>
+    <string name="remove_parental_control">Remove supervision</string>
     <string name="remove_all_limitations_title">Remove all limitations?</string>
     <string name="remove_all_limitations_msg">This is local Travel mode. It clears active Disable Use, Timeout, blocked apps and profiles on this child device.</string>
     <string name="remove_limitations">Remove limitations</string>

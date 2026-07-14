@@ -2,11 +2,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -14,21 +16,21 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <application android:theme="@style/AppTheme" android:label="Parental-Link" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="false" android:supportsRtl="true">
+    <application android:theme="@style/AppTheme" android:label="Parental-Link" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="false" android:supportsRtl="true" android:resizeableActivity="false">
         <receiver android:name=".calls.CallActionReceiver" android:exported="false" />
         <activity android:name=".calls.CallActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".chat.ChatMessageActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".chat.ChildChatActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".chat.QuickChatOverlayActivity" android:exported="false" android:theme="@android:style/Theme.Material.Light.NoActionBar" />
         <activity android:name=".audio.ChildAudioMessageActivity" android:exported="false" android:screenOrientation="portrait" />
-        <activity android:name=".ChildLauncherActivity" android:exported="true" android:screenOrientation="portrait">
+        <activity android:name=".ChildLauncherActivity" android:exported="true" android:screenOrientation="portrait" android:resizeableActivity="false" android:lockTaskMode="if_whitelisted">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait">
+        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait" android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -58,7 +60,7 @@
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
             <intent-filter><action android:name="android.app.action.DEVICE_ADMIN_ENABLED" /></intent-filter>
         </receiver>
-            <service android:name=".services.ChildServerService" android:exported="false" android:foregroundServiceType="dataSync" />
+            <service android:name=".services.ChildServerService" android:exported="false" android:foregroundServiceType="connectedDevice" />
         <service android:name=".services.ParentMonitorService" android:exported="false" android:foregroundServiceType="dataSync" />
         <service android:name=".services.BlockAccessibilityService" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
             <intent-filter><action android:name="android.accessibilityservice.AccessibilityService" /></intent-filter>

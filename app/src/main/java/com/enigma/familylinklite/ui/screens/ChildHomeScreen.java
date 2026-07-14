@@ -79,6 +79,7 @@ public final class ChildHomeScreen {
             status.setTextColor(permissionsOk ? UiFactory.green() : UiFactory.red());
             status.setTypeface(Typeface.DEFAULT_BOLD);
             info.addView(status);
+            info.addView(UiFactory.mutedText(activity, "Supervision service active", 13));
             row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
             statusCard.addView(row);
             root.addView(statusCard);
@@ -89,7 +90,7 @@ public final class ChildHomeScreen {
             quick.setColumnCount(4);
             quick.setPadding(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 8));
             String[] icons = new String[]{"ic_proto_bell", chatUnread ? "ic_proto_bell" : "ic_proto_chat", "ic_menu_settings", "ic_proto_more"};
-            String[] labels = new String[]{"Ask parent", "Chat", "Options", "Menu"};
+            String[] labels = new String[]{"Ask", "Chat", "Options", "Menu"};
             View.OnClickListener[] listeners = new View.OnClickListener[]{askParent, callParent, unlockSettings, openMenu};
             for (int i = 0; i < labels.length; i++) {
                 LinearLayout tile = actionTile(activity, icons[i], labels[i]);
@@ -138,8 +139,8 @@ public final class ChildHomeScreen {
         tile.setGravity(Gravity.CENTER);
         tile.setPadding(UiFactory.dp(activity, 3), UiFactory.dp(activity, 6), UiFactory.dp(activity, 3), UiFactory.dp(activity, 6));
         android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setColor(UiFactory.panel(activity));
-        bg.setCornerRadius(UiFactory.dp(activity, 8));
+        bg.setColor(UiFactory.isDark(activity) ? UiFactory.panel(activity) : Color.WHITE);
+        bg.setCornerRadius(UiFactory.dp(activity, 10));
         bg.setStroke(UiFactory.dp(activity, 1), UiFactory.border(activity));
         tile.setBackground(bg);
         ImageView iconView = new ImageView(activity);
@@ -148,10 +149,10 @@ public final class ChildHomeScreen {
         iconView.setColorFilter(UiFactory.blue());
         iconView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         iconView.setPadding(UiFactory.dp(activity, 2), UiFactory.dp(activity, 2), UiFactory.dp(activity, 2), UiFactory.dp(activity, 2));
-        TextView labelView = UiFactory.text(activity, label, 12);
+        TextView labelView = UiFactory.text(activity, label, 13);
         labelView.setGravity(Gravity.CENTER);
         labelView.setMaxLines(2);
-        tile.addView(iconView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 42)));
+        tile.addView(iconView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(activity, 44)));
         tile.addView(labelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return tile;
     }
@@ -159,8 +160,8 @@ public final class ChildHomeScreen {
     private static LinearLayout card(Activity activity) {
         LinearLayout card = new LinearLayout(activity);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(UiFactory.dp(activity, 12), UiFactory.dp(activity, 12), UiFactory.dp(activity, 12), UiFactory.dp(activity, 12));
-        card.setBackground(UiFactory.rounded(activity, UiFactory.panel(activity), 18));
+        card.setPadding(UiFactory.dp(activity, 14), UiFactory.dp(activity, 14), UiFactory.dp(activity, 14), UiFactory.dp(activity, 14));
+        card.setBackground(UiFactory.rounded(activity, UiFactory.isDark(activity) ? UiFactory.panel(activity) : UiFactory.panel2(activity), 14));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(isWide(activity) ? UiFactory.dp(activity, 420) : ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, UiFactory.dp(activity, 10), 0, UiFactory.dp(activity, 4));
         lp.gravity = Gravity.CENTER_HORIZONTAL;

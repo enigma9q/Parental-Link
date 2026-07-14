@@ -1,10 +1,12 @@
 package com.enigma.familylinklite.services;
 
-import android.app.*;import android.content.*;import android.graphics.BitmapFactory;import android.os.*;import com.enigma.familylinklite.MainActivity;import com.enigma.familylinklite.R;import com.enigma.familylinklite.ui.StatusFormatter;
+import android.app.*;import android.content.*;import android.graphics.BitmapFactory;import android.os.*;import com.enigma.familylinklite.MainActivity;import com.enigma.familylinklite.R;import com.enigma.familylinklite.network.CommandClient;import com.enigma.familylinklite.storage.SavedConnection;import com.enigma.familylinklite.ui.StatusFormatter;
 
 public class ParentMonitorService extends Service{
     public static final int NOTIFICATION_ID=3;
     static final String CHANNEL="parent_monitor";
+    final Handler handler=new Handler(Looper.getMainLooper());
+    Runnable pollLoop=new Runnable(){public void run(){android.content.SharedPreferences p=getSharedPreferences("p",0);if(!p.getBoolean("parentPermanentNotification",false)){stopSelf();return;}pollChildStatus();handler.postDelayed(this,p.getBoolean("childUnlockRequestPending",false)?10000L:30000L);}};
     public IBinder onBind(Intent i){return null;}
     public void onCreate(){super.onCreate();createChannel();}
     public int onStartCommand(Intent intent,int flags,int startId){
@@ -17,7 +19,7 @@ public class ParentMonitorService extends Service{
             if(permanent)startForeground(NOTIFICATION_ID,n);
             else getSystemService(NotificationManager.class).notify(NOTIFICATION_ID,n);
         }catch(Exception ignored){}
-        if(permanent)return START_STICKY;
+        if(permanent){handler.removeCallbacks(pollLoop);handler.post(pollLoop);return START_STICKY;}
         final int sid=startId;
         new Handler(Looper.getMainLooper()).postDelayed(()->{
             try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}
@@ -25,7 +27,49 @@ public class ParentMonitorService extends Service{
         },3000L);
         return START_NOT_STICKY;
     }
-    public void onDestroy(){try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}super.onDestroy();}
+    public void onDestroy(){handler.removeCallbacks(pollLoop);try{getSystemService(NotificationManager.class).cancel(NOTIFICATION_ID);}catch(Exception ignored){}super.onDestroy();}
+
+    void pollChildStatus(){
+        try{
+            SavedConnection c=new SavedConnection(this);
+            if(!c.hasParentConnection())return;
+            byte[] key=c.parentKeyBytesOrNull();
+            if(key==null)return;
+            new CommandClient(this).send(c.childIp(),key,"hello","",resp->{applyHello(resp);refreshNotification();pollChatStatus(c,key);},err->{refreshNotification();});
+        }catch(Exception ignored){}
+    }
+
+    void pollChatStatus(SavedConnection c,byte[] key){
+        new CommandClient(this).send(c.childIp(),key,"chat_status","",resp->{String compact=compactChatStatus(resp);android.content.SharedPreferences p=getSharedPreferences("p",0);String old=p.getString("lastQuickChildStatus","");if(compact.length()>0&&!compact.equals(old)){p.edit().putString("lastQuickChildStatus",compact).apply();showParentNotice("Chat reply",compact);}refreshNotification();},err->{});
+    }
+
+    void applyHello(String resp){
+        android.content.SharedPreferences p=getSharedPreferences("p",0);
+        android.content.SharedPreferences.Editor ed=p.edit();
+        boolean requested=p.getBoolean("childUnlockRequestPending",false);
+        String reason=p.getString("childUnlockRequestReason","limitation");
+        long askAt=p.getLong("childUnlockRequestAt",System.currentTimeMillis());
+        for(String line:(resp==null?"":resp).split("\\n")){
+            if(line.startsWith("VERSION:"))ed.putString("remoteVersion",line.substring(8).trim());
+            else if(line.startsWith("PERMISSIONS:"))ed.putString("remotePermissions",line.substring(12).trim());
+            else if(line.startsWith("DND:"))ed.putString("remoteDnd",line.substring(4).trim());
+            else if(line.startsWith("BATTERY:")){try{ed.putInt("remoteBattery",Integer.parseInt(line.substring(8).trim()));}catch(Exception ignored){}}
+            else if(line.startsWith("CHARGING:"))ed.putBoolean("remoteCharging",Boolean.parseBoolean(line.substring(9).trim()));
+            else if(line.startsWith("WIFI_BARS:")){try{ed.putInt("remoteWifiBars",Integer.parseInt(line.substring(10).trim()));}catch(Exception ignored){}}
+            else if(line.startsWith("ASK_PARENT_REQUESTED:")){requested=Boolean.parseBoolean(line.substring(21).trim());ed.putBoolean("childUnlockRequestPending",requested);}
+            else if(line.startsWith("ASK_PARENT_REASON:")){reason=line.substring(18).trim();ed.putString("childUnlockRequestReason",reason);}
+            else if(line.startsWith("ASK_PARENT_AT:")){try{askAt=Long.parseLong(line.substring(14).trim());ed.putLong("childUnlockRequestAt",askAt);}catch(Exception ignored){}}
+        }
+        ed.putLong("lastStatusMs",System.currentTimeMillis()).apply();
+        if(requested){
+            long alerted=p.getLong("lastParentUnlockAlertAt",0);
+            if(askAt!=alerted){p.edit().putLong("lastParentUnlockAlertAt",askAt).apply();showParentNotice("Unlock request",reason);}
+        }
+    }
+
+    String compactChatStatus(String resp){if(resp==null)return "";for(String line:resp.split("\\n")){if(line.startsWith("Child action:"))return line.substring("Child action:".length()).trim();if(line.startsWith("Last child reply:"))return line.substring("Last child reply:".length()).trim();if(line.startsWith("Last child chat:"))return line.substring("Last child chat:".length()).trim();}return "";}
+    void refreshNotification(){try{android.content.SharedPreferences p=getSharedPreferences("p",0);startForeground(NOTIFICATION_ID,notification(notificationTitle(p),notificationSummary(p),true));}catch(Exception ignored){}}
+    void showParentNotice(String title,String text){try{NotificationManager nm=getSystemService(NotificationManager.class);String ch="parent_alerts_v2";if(Build.VERSION.SDK_INT>=26){NotificationChannel c=new NotificationChannel(ch,"Parental-Link parent alerts",NotificationManager.IMPORTANCE_HIGH);c.enableVibration(true);nm.createNotificationChannel(c);}Intent i=new Intent(this,MainActivity.class);PendingIntent pi=PendingIntent.getActivity(this,31,i,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);Notification.Builder b=Build.VERSION.SDK_INT>=26?new Notification.Builder(this,ch):new Notification.Builder(this);b.setContentTitle(title).setContentText(firstLine(text)).setStyle(new Notification.BigTextStyle().bigText(text)).setSmallIcon(R.drawable.ic_notification_link).setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher)).setContentIntent(pi).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE);nm.notify(31,b.build());}catch(Exception ignored){}}
 
     String notificationTitle(android.content.SharedPreferences p){
         String childIp=p.getString("childIp","").trim();

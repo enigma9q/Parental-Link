@@ -1,10 +1,10 @@
 # Parental-Link
 
-Parental-Link is a local Wi-Fi Android parental-control app for parent and child devices on the same network. The active app is Java-native, with the old Kotlin/Compose dashboard path removed.
+Parental-Link is a local Wi-Fi Android supervision app for parent and child devices on the same network. The active app is Java-native, with the old Kotlin/Compose dashboard path removed.
 
 ## Current Version
 
-`1.0.0-rc1`
+`1.0.0-rc2`
 
 This is the first v1 release-candidate line. The goal is to stabilise pairing, parent/child notifications, launcher mode, child service survival, and active-time reporting before tagging a final v1.
 
@@ -23,7 +23,7 @@ This is the first v1 release-candidate line. The goal is to stabilise pairing, p
 Releases are produced from version tags such as:
 
 ```text
-v1.0.0-rc1
+v1.0.0-rc2
 ```
 
 When a version tag is pushed, GitHub Actions builds the release APK and publishes it to the matching GitHub release.

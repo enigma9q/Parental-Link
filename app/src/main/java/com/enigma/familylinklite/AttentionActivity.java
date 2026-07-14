@@ -36,6 +36,7 @@ public class AttentionActivity extends Activity {
             updateCountdown();
         }
     };
+    long lastSplitHomeAt = 0;
 
     public void onCreate(Bundle b) {
         super.onCreate(b);
@@ -295,7 +296,7 @@ public class AttentionActivity extends Activity {
             return;
         }
         keepFrontVisuals();
-        if (blockingInSplitScreen()) scheduleRefocus(80);
+        if (blockingInSplitScreen()) collapseSplitScreenAndRefocus();
     }
 
     protected void onPause() {
@@ -312,16 +313,29 @@ public class AttentionActivity extends Activity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) keepFrontVisuals();
         else scheduleRefocus(250);
-        if (blockingInSplitScreen()) scheduleRefocus(80);
+        if (blockingInSplitScreen()) collapseSplitScreenAndRefocus();
     }
 
     public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
-        if (isInMultiWindowMode && blocking && !closing && activeChildLock()) scheduleRefocus(60);
+        if (isInMultiWindowMode && blocking && !closing && activeChildLock()) collapseSplitScreenAndRefocus();
     }
 
     boolean blockingInSplitScreen() {
         return Build.VERSION.SDK_INT >= 24 && blocking && !closing && activeChildLock() && isInMultiWindowMode();
+    }
+    void collapseSplitScreenAndRefocus() {
+        long now = System.currentTimeMillis();
+        if (now - lastSplitHomeAt > 1500) {
+            lastSplitHomeAt = now;
+            try {
+                Intent home = new Intent(Intent.ACTION_MAIN);
+                home.addCategory(Intent.CATEGORY_HOME);
+                home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(home);
+            } catch (Exception ignored) {}
+        }
+        scheduleRefocus(80);
     }
 
     public void onBackPressed() {

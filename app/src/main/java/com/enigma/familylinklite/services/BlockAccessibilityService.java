@@ -16,6 +16,7 @@ import java.text.*;import java.util.*;
 
 public class BlockAccessibilityService extends AccessibilityService{
     Handler h=new Handler(Looper.getMainLooper());
+    long lastSplitCollapseAt=0;
     Runnable timeoutCheck=new Runnable(){public void run(){enforceTimeout();enforceVisibleBlockedApps();h.postDelayed(this,700);}};
     public void onServiceConnected(){super.onServiceConnected();h.post(timeoutCheck);notifySmall("Accessibility blocking active","Parental-Link can now cover blocked apps.");}
     public void onDestroy(){h.removeCallbacksAndMessages(null);super.onDestroy();}
@@ -33,14 +34,17 @@ public class BlockAccessibilityService extends AccessibilityService{
         if(until>now){showBlockedAppScreen(pkg,until);}
         enforceVisibleBlockedApps();
     }
-    void enforceTimeout(){long until=getSharedPreferences("rules",0).getLong("lock_until",0);if(until>System.currentTimeMillis())showLimitationScreen(until);}
+    void enforceTimeout(){long until=getSharedPreferences("rules",0).getLong("lock_until",0);if(until>System.currentTimeMillis()){collapseSplitScreenIfNeeded();showLimitationScreen(until);}}
     void enforceVisibleBlockedApps(){
         long now=System.currentTimeMillis();
-        if(getSharedPreferences("rules",0).getLong("lock_until",0)>now)return;
         if(Build.VERSION.SDK_INT<21)return;
         try{
             List<AccessibilityWindowInfo> windows=getWindows();
             if(windows==null)return;
+            if(getSharedPreferences("rules",0).getLong("lock_until",0)>now){
+                collapseSplitScreenIfNeeded(windows);
+                return;
+            }
             for(AccessibilityWindowInfo w:windows){
                 if(w==null)continue;
                 AccessibilityNodeInfo root=w.getRoot();
@@ -50,6 +54,17 @@ public class BlockAccessibilityService extends AccessibilityService{
                     if(until>now){showBlockedAppScreen(pkg,until);return;}
                 }
             }
+        }catch(Exception ignored){}
+    }
+    void collapseSplitScreenIfNeeded(){try{if(Build.VERSION.SDK_INT>=21)collapseSplitScreenIfNeeded(getWindows());}catch(Exception ignored){}}
+    void collapseSplitScreenIfNeeded(List<AccessibilityWindowInfo> windows){
+        try{
+            if(windows==null||windows.size()<2)return;
+            long now=System.currentTimeMillis();
+            if(now-lastSplitCollapseAt<1800)return;
+            lastSplitCollapseAt=now;
+            performGlobalAction(GLOBAL_ACTION_HOME);
+            notifySmall("Split screen blocked","Parental-Link returned to the lock screen.");
         }catch(Exception ignored){}
     }
     String packageFromNode(AccessibilityNodeInfo node){
