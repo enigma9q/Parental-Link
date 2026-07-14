@@ -175,26 +175,29 @@ public final class UiFactory {
         bar.setPadding(0, 0, 0, dp(activity, 8));
 
         String screenTitle = title == null || title.trim().length() == 0 ? "Parental-Link" : title.trim();
-        FrameLayout userBox = new FrameLayout(activity);
-        Button user = button(activity, "\u2630");
-        user.setTextSize(22);
-        user.setMinWidth(dp(activity, 48));
-        user.setMinHeight(dp(activity, 44));
-        LinearLayout.LayoutParams userLp = new LinearLayout.LayoutParams(dp(activity, 52), dp(activity, 46));
-        userLp.setMargins(0, 0, dp(activity, 10), 0);
-        userBox.addView(user, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (hasAttention(prefs)) {
-            TextView dot = new TextView(activity);
-            dot.setText("");
-            GradientDrawable badge = new GradientDrawable();
-            badge.setShape(GradientDrawable.OVAL);
-            badge.setColor(blue());
-            dot.setBackground(badge);
-            FrameLayout.LayoutParams dlp = new FrameLayout.LayoutParams(dp(activity, 9), dp(activity, 9), android.view.Gravity.RIGHT | android.view.Gravity.TOP);
-            dlp.setMargins(0, dp(activity, 8), dp(activity, 8), 0);
-            userBox.addView(dot, dlp);
+        if (userMenuClick != null) {
+            FrameLayout userBox = new FrameLayout(activity);
+            Button user = button(activity, "\u2630");
+            user.setTextSize(22);
+            user.setMinWidth(dp(activity, 48));
+            user.setMinHeight(dp(activity, 44));
+            LinearLayout.LayoutParams userLp = new LinearLayout.LayoutParams(dp(activity, 52), dp(activity, 46));
+            userLp.setMargins(0, 0, dp(activity, 10), 0);
+            userBox.addView(user, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            if (hasAttention(prefs)) {
+                TextView dot = new TextView(activity);
+                dot.setText("");
+                GradientDrawable badge = new GradientDrawable();
+                badge.setShape(GradientDrawable.OVAL);
+                badge.setColor(blue());
+                dot.setBackground(badge);
+                FrameLayout.LayoutParams dlp = new FrameLayout.LayoutParams(dp(activity, 9), dp(activity, 9), android.view.Gravity.RIGHT | android.view.Gravity.TOP);
+                dlp.setMargins(0, dp(activity, 8), dp(activity, 8), 0);
+                userBox.addView(dot, dlp);
+            }
+            bar.addView(userBox, userLp);
+            user.setOnClickListener(userMenuClick::onClick);
         }
-        bar.addView(userBox, userLp);
 
         TextView name = text(activity, screenTitle, 20);
         name.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
@@ -202,7 +205,6 @@ public final class UiFactory {
         bar.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
         host.addView(bar, 0);
-        user.setOnClickListener(userMenuClick::onClick);
         return name;
     }
 

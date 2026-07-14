@@ -59,6 +59,7 @@ public class ChildLauncherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         packageManager = getPackageManager();
+        compactRows = getSharedPreferences("launcher", 0).getBoolean("compactRows", false);
         render();
     }
 
@@ -159,15 +160,11 @@ public class ChildLauncherActivity extends Activity {
         shortcuts.setOrientation(LinearLayout.HORIZONTAL);
         ButtonLike dashboard = new ButtonLike("Parental-Link", "ic_menu_dashboard", "dashboard");
         ButtonLike chat = new ButtonLike("Chat", "ic_proto_chat", "chat");
-        ButtonLike settings = new ButtonLike("Settings", "ic_menu_settings", "settings");
         shortcuts.addView(shortcut(dashboard), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 44), 1));
         LinearLayout.LayoutParams gap = new LinearLayout.LayoutParams(UiFactory.dp(this, 8), 1);
         View spacer = new View(this);
         shortcuts.addView(spacer, gap);
         shortcuts.addView(shortcut(chat), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 44), 1));
-        View spacer2 = new View(this);
-        shortcuts.addView(spacer2, new LinearLayout.LayoutParams(UiFactory.dp(this, 8), 1));
-        shortcuts.addView(shortcut(settings), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 44), 1));
         LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, UiFactory.dp(this, 44));
         header.addView(shortcuts, clp);
 
@@ -298,7 +295,7 @@ public class ChildLauncherActivity extends Activity {
         bar.setPadding(0, UiFactory.dp(this, 8), 0, 0);
         bar.addView(navButton("\u25A6", "Apps", v -> openDrawer()), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 62), 1));
         bar.addView(navButton("\uD83D\uDCAC", "Chat", v -> startActivity(new Intent(this, com.enigma.familylinklite.chat.ChildChatActivity.class))), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 62), 1));
-        bar.addView(navButton("\u2699", "Launcher", v -> showLauncherSettings()), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 62), 1));
+        bar.addView(navButton("?", "Ask", v -> startActivity(new Intent(this, MainActivity.class).putExtra("open", "child_requests"))), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 62), 1));
         bar.addView(navButton("\u22EE", "Menu", v -> startActivity(new Intent(this, MainActivity.class).putExtra("open", "child_dashboard"))), new LinearLayout.LayoutParams(0, UiFactory.dp(this, 62), 1));
         root.addView(bar);
     }
@@ -443,21 +440,6 @@ public class ChildLauncherActivity extends Activity {
 
     private boolean drawerSwipeEnabled() {
         return getSharedPreferences("launcher", 0).getBoolean("drawerSwipe", true);
-    }
-
-    private void showLauncherSettings() {
-        String[] options = new String[]{drawerSwipeEnabled() ? "Disable swipe-up drawer" : "Enable swipe-up drawer", compactRows ? "Use comfortable drawer rows" : "Use compact drawer rows"};
-        new AlertDialog.Builder(this)
-                .setTitle("Launcher settings")
-                .setItems(options, (d, which) -> {
-                    if (which == 0) {
-                        getSharedPreferences("launcher", 0).edit().putBoolean("drawerSwipe", !drawerSwipeEnabled()).apply();
-                    } else {
-                        compactRows = !compactRows;
-                    }
-                    render();
-                })
-                .show();
     }
 
     private void renderApps() {
@@ -906,7 +888,7 @@ public class ChildLauncherActivity extends Activity {
     private void openShortcut(String action) {
         Intent intent;
         if ("chat".equals(action)) intent = new Intent(this, com.enigma.familylinklite.chat.ChildChatActivity.class);
-        else if ("settings".equals(action)) intent = new Intent(this, MainActivity.class).putExtra("open", "child_settings");
+        else if ("settings".equals(action)) intent = new Intent(this, MainActivity.class).putExtra("open", "child_dashboard");
         else intent = new Intent(this, MainActivity.class).putExtra("open", "child_dashboard");
         startActivity(intent);
     }

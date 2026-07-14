@@ -9,7 +9,7 @@ public final class AppConfig {
     public static final int PROTOCOL_VERSION = 9;
     public static final int MIN_SUPPORTED_PROTOCOL = 2;
 
-    public static final String APP_VERSION = "1.0.0-rc2";
+    public static final String APP_VERSION = "1.0.0-rc3";
     public static final String DEFAULT_REPO = "enigma9q/Parental-Link";
 
     public static final String PREFS = "p";
